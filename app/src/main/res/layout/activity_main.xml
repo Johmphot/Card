@@ -21,6 +21,7 @@
         android:layout_marginBottom="75dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:clickable="false" />
+        android:clickable="true"
+        android:onClick="onClick_Start" />
 
 </RelativeLayout>
