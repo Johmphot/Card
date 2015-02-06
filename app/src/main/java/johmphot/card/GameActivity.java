@@ -1,8 +1,8 @@
 package johmphot.card;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,16 +12,25 @@ import android.widget.ImageView;
 
 public class GameActivity extends ActionBarActivity {
 
-    private ImageView player1card;
-    private Button drawButton;
     final Game round = new Game();
+    private ImageView[] playerCardImage = new ImageView[round.playerNum];
+    private Button drawButton,drawButton2,readyButton;
+    public int loser = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        player1card = (ImageView)findViewById(R.id.player1card);
+        //Resources r = getResources();
+        //String name = getPackageName();
+        //for(int i = 0; i < round.playerNum; i++)
+        //{
+        //    playerCard[i] = (ImageView) findViewById(r.getIdentifier("playercard" + i, "id", name));
+        //}
+        playerCardImage[0] = (ImageView)findViewById(R.id.playercard1);
+        playerCardImage[1] = (ImageView)findViewById(R.id.playercard2);
+
         round.start();
         updateUI(round);
 
@@ -32,6 +41,31 @@ public class GameActivity extends ActionBarActivity {
             {
                 round.draw(0);
                 updateUI(round);
+            }
+        });
+
+        //temporary until bluetooth multiplayer implemented
+        drawButton2 = (Button)findViewById(R.id.draw_button_2);
+        drawButton2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                round.draw(1);
+                updateUI(round);
+            }
+        });
+        //temp end
+
+        readyButton = (Button)findViewById(R.id.ready_button);
+        readyButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                loser = round.findLoser(round.playerCard);
+                Intent intent = new Intent(GameActivity.this,FinishActivity.class);
+                intent.putExtra("loser", loser);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -61,6 +95,9 @@ public class GameActivity extends ActionBarActivity {
 
     public void updateUI(Game round)
     {
-        player1card.setImageResource(round.getPlayerCard(0).getCardReference());
+        for(int i=0;i<round.playerNum;i++)
+        {
+            playerCardImage[i].setImageResource(round.getPlayerCard(i).getCardReference());
+        }
     }
 }

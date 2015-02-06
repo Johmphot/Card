@@ -7,25 +7,48 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 
-public class MainActivity extends ActionBarActivity {
+public class FinishActivity extends ActionBarActivity {
 
-    private Button start;
+    private TextView result;
+    private Button restart, exit;
+
+    public FinishActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_finish);
 
-        start = (Button)findViewById(R.id.start_button);
-        start.setOnClickListener(new View.OnClickListener(){
+        int loser = -1;
+        Bundle extras = getIntent().getExtras();
+        if(extras!=null)
+        {
+            loser = extras.getInt("loser")+1;
+        }
+        result = (TextView)findViewById(R.id.result_text);
+        result.setText("Player "+loser+" Loses");
+
+        restart = (Button)findViewById(R.id.restart_button);
+        restart.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(MainActivity.this,GameActivity.class);
+                Intent intent = new Intent(FinishActivity.this, GameActivity.class);
                 startActivity(intent);
                 finish();
+            }
+        });
+
+        exit = (Button)findViewById(R.id.exit_button);
+        exit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                System.exit(0);
             }
         });
     }
@@ -34,7 +57,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_finish, menu);
         return true;
     }
 
