@@ -2,16 +2,38 @@ package johmphot.card;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 
 
 public class GameActivity extends ActionBarActivity {
+
+    private ImageView player1card;
+    private Button drawButton;
+    final Game round = new Game();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        player1card = (ImageView)findViewById(R.id.player1card);
+        round.start();
+        updateUI(round);
+
+        drawButton = (Button)findViewById(R.id.draw_button);
+        drawButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                round.draw(0);
+                updateUI(round);
+            }
+        });
     }
 
 
@@ -35,5 +57,10 @@ public class GameActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void updateUI(Game round)
+    {
+        player1card.setImageResource(round.getPlayerCard(0).getCardReference());
     }
 }
