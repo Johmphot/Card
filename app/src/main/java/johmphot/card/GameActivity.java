@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 public class GameActivity extends ActionBarActivity {
@@ -39,7 +40,13 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void onClick(View v)
             {
-                round.draw(0);
+                boolean drawable = round.draw(0);
+                if(!drawable)
+                {
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getApplicationContext(), "No more card left", duration);
+                    toast.show();
+                }
                 updateUI(round);
             }
         });
@@ -50,7 +57,13 @@ public class GameActivity extends ActionBarActivity {
             @Override
             public void onClick(View v)
             {
-                round.draw(1);
+                boolean drawable = round.draw(1);
+                if(!drawable)
+                {
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getApplicationContext(), "No more card left", duration);
+                    toast.show();
+                }
                 updateUI(round);
             }
         });

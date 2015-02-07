@@ -1,7 +1,7 @@
 package johmphot.card;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 
 public class Game
 {
@@ -12,6 +12,7 @@ public class Game
 
     public void start()
     {
+        Collections.shuffle(deck);
         for(int i=0;i<playerCard.length;i++)
         {
             playerCard[i] = draw();
@@ -20,14 +21,25 @@ public class Game
 
     public Card draw()
     {
-        Random r = new Random();
-        int i = (r.nextInt(deck.size()-1));
-        return deck.get(i);
+        //Random r = new Random();
+        //int i = (r.nextInt(deck.size()-1));
+        if(deck.size()!=0)
+        {
+            Card x = deck.get(0);
+            deck.remove(0);
+            return x;
+        }
+        return null;
     }
 
-    public void draw(int playerID)
+    public boolean draw(int playerID)
     {
-        playerCard[playerID] = draw();
+        if(deck.size()!=0)
+        {
+            playerCard[playerID] = draw();
+            return true;
+        }
+        return false;
     }
 
     public Card getPlayerCard(int playerID)
