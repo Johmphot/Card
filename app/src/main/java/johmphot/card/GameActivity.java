@@ -15,7 +15,7 @@ public class GameActivity extends ActionBarActivity {
 
     final Game round = new Game();
     private ImageView[] playerCardImage = new ImageView[round.playerNum];
-    private Button drawButton,drawButton2,readyButton;
+    private Button drawButton,drawButton2,drawButton3,drawButton4,readyButton;
     public int loser = -1;
 
     @Override
@@ -31,6 +31,8 @@ public class GameActivity extends ActionBarActivity {
         //}
         playerCardImage[0] = (ImageView)findViewById(R.id.playercard1);
         playerCardImage[1] = (ImageView)findViewById(R.id.playercard2);
+        playerCardImage[2] = (ImageView)findViewById(R.id.playercard3);
+        playerCardImage[3] = (ImageView)findViewById(R.id.playercard4);
 
         round.start();
         updateUI(round);
@@ -51,6 +53,7 @@ public class GameActivity extends ActionBarActivity {
             }
         });
 
+        //temp end
         //temporary until bluetooth multiplayer implemented
         drawButton2 = (Button)findViewById(R.id.draw_button_2);
         drawButton2.setOnClickListener(new View.OnClickListener(){
@@ -68,6 +71,41 @@ public class GameActivity extends ActionBarActivity {
             }
         });
         //temp end
+
+        //temporary until bluetooth multiplayer implemented
+        drawButton3 = (Button)findViewById(R.id.draw_button_3);
+        drawButton3.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                boolean drawable = round.draw(2);
+                if(!drawable)
+                {
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getApplicationContext(), "No more card left", duration);
+                    toast.show();
+                }
+                updateUI(round);
+            }
+        });
+        //temp end
+
+        //temporary until bluetooth multiplayer implemented
+        drawButton4 = (Button)findViewById(R.id.draw_button_4);
+        drawButton4.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                boolean drawable = round.draw(3);
+                if(!drawable)
+                {
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getApplicationContext(), "No more card left", duration);
+                    toast.show();
+                }
+                updateUI(round);
+            }
+        });
 
         readyButton = (Button)findViewById(R.id.ready_button);
         readyButton.setOnClickListener(new View.OnClickListener(){

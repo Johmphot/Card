@@ -5,7 +5,7 @@ import java.util.Collections;
 
 public class Game
 {
-    int playerNum = 2;
+    int playerNum = 4;
     Card[] playerCard = new Card[playerNum];
     CardSet set = new CardSet();
     ArrayList<Card> deck = set.getDeck();
@@ -21,8 +21,6 @@ public class Game
 
     public Card draw()
     {
-        //Random r = new Random();
-        //int i = (r.nextInt(deck.size()-1));
         if(deck.size()!=0)
         {
             Card x = deck.get(0);
