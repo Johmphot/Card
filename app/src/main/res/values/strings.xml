@@ -8,5 +8,7 @@
     <string name="title_activity_finish">FinishActivity</string>
     <string name="title_activity_multiplayer">MultiplayerActivity</string>
     <string name="title_activity_mulitplayer_menu">MulitplayerMenuActivity</string>
+    <string name="title_activity_create_match">CreateMatchActivity</string>
+    <string name="title_activity_join_match">JoinMatchActivity</string>
 
 </resources>

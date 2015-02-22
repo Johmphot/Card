@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 
-public class MultiplayerActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class CreateMatchActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     BluetoothAdapter btAdapter;
     ListView listView;
@@ -33,7 +33,7 @@ public class MultiplayerActivity extends ActionBarActivity implements AdapterVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_multiplayer);
+        setContentView(R.layout.activity_create_match);
 
         initialize();
 
@@ -144,7 +144,7 @@ public class MultiplayerActivity extends ActionBarActivity implements AdapterVie
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_multiplayer, menu);
+        getMenuInflater().inflate(R.menu.menu_create_match, menu);
         return true;
     }
 

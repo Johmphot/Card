@@ -8,7 +8,7 @@
     <TextView android:text="Card Game" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
-        android:layout_marginTop="59dp"
+        android:layout_marginTop="85dp"
         android:textSize="36dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
@@ -26,11 +26,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Multiplayer"
-        android:id="@+id/multiplayer_button"
-        android:layout_marginBottom="47dp"
+        android:text="Create Multiplayer Match"
+        android:id="@+id/CreateMultiplayer_button"
         android:clickable="true"
-        android:layout_above="@+id/start_button"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Match"
+        android:id="@+id/joinMultiplayer_button"
+        android:clickable="true"
+        android:layout_below="@+id/CreateMultiplayer_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp" />
 
 </RelativeLayout>

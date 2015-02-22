@@ -28,8 +28,12 @@
             android:label="@string/title_activity_finish" >
         </activity>
         <activity
-            android:name=".MultiplayerActivity"
-            android:label="@string/title_activity_multiplayer" >
+            android:name=".CreateMatchActivity"
+            android:label="@string/title_activity_create_match" >
+        </activity>
+        <activity
+            android:name=".JoinMatchActivity"
+            android:label="@string/title_activity_join_match" >
         </activity>
     </application>
 

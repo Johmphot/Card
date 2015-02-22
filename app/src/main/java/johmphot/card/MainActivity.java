@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
-    private Button start,multiplayer;
+    private Button start, createMultiplayer, joinMultiplayer;
     BluetoothAdapter btAdapter;
 
     @Override
@@ -46,14 +46,23 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        multiplayer = (Button)findViewById(R.id.multiplayer_button);
-        multiplayer.setOnClickListener(new View.OnClickListener(){
+        createMultiplayer = (Button)findViewById(R.id.CreateMultiplayer_button);
+        createMultiplayer.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
-                Intent intent = new Intent(MainActivity.this, MultiplayerActivity.class);
+                Intent intent = new Intent(MainActivity.this, CreateMatchActivity.class);
                 startActivity(intent);
-                finish();
+            }
+        });
+
+        joinMultiplayer = (Button)findViewById(R.id.joinMultiplayer_button);
+        joinMultiplayer.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(MainActivity.this, JoinMatchActivity.class);
+                startActivity(intent);
             }
         });
 
