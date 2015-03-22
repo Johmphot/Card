@@ -56,15 +56,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        joinMultiplayer = (Button)findViewById(R.id.joinMultiplayer_button);
-        joinMultiplayer.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MainActivity.this, JoinMatchActivity.class);
-                startActivity(intent);
-            }
-        });
 
     }
 

@@ -1,144 +1,45 @@
 package johmphot.card;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.Set;
+import android.widget.Button;
 
 
 public class CreateMatchActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
-    BluetoothAdapter btAdapter;
-    ListView listView;
-    ArrayAdapter<String> listAdapter;
-    Set<BluetoothDevice> deviceArray;
-    ArrayList<String> pairedDevices;
-    IntentFilter filter;
-    BroadcastReceiver receiver;
+    Button create_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_match);
-
-        initialize();
-
-        getPairedDevices();
-        startDiscovery();
-        Toast.makeText(getApplicationContext(), "Finding Bluetooth Device ... ", Toast.LENGTH_SHORT).show();
-
-    }
-
-
-    private void initialize()
-    {
-        listView = (ListView)findViewById(R.id.deviceView);
-        listView.setOnItemClickListener(this);
-        listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, 0);
-        listView.setAdapter(listAdapter);
-        btAdapter = BluetoothAdapter.getDefaultAdapter();
-        pairedDevices = new ArrayList<String>();
-        filter  = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        receiver = new BroadcastReceiver()
+        if (savedInstanceState == null)
         {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            MultiplayerGameFragment fragment = new MultiplayerGameFragment();
+            transaction.replace(R.id.frame_view, fragment);
+            transaction.commit();
+        }
+
+        create_button = (Button)findViewById(R.id.create_button);
+        create_button.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onReceive(Context context, Intent intent)
+            public void onClick(View v)
             {
-                String action = intent.getAction();
-                if(BluetoothDevice.ACTION_FOUND.equals(action))
-                {
-                    Toast.makeText(getApplicationContext(), "Devices Found", Toast.LENGTH_SHORT).show();
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                    listAdapter.add(device.getName()+"\n"+device.getAddress());
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
-                {
-                    //run some code
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
-                {
-                    //run some code
-                }
-                else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action))
-                {
-                    if(btAdapter.getState()==BluetoothAdapter.STATE_OFF)
-                    {
-                        turnOnBluetooth();
-                    }
-                }
+                //temp
+                Intent intent = new Intent(CreateMatchActivity.this, MultiplayerGameActivity.class);
+                startActivity(intent);
+                finish();
             }
-        };
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(receiver,filter);
-    }
+        });
 
-    private void startDiscovery()
-    {
-        btAdapter.cancelDiscovery();
-        btAdapter.startDiscovery();
-    }
 
-    @Override
-    protected void onPause()
-    {
-        super.onPause();
-        try
-        {
-            unregisterReceiver(receiver);
-        }
-        catch(IllegalArgumentException ignored){}
-    }
-
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        registerReceiver(receiver, filter);
-    }
-
-    private void turnOnBluetooth()
-    {
-        Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(intent, 1);
-    }
-
-    private void getPairedDevices()
-    {
-        deviceArray = btAdapter.getBondedDevices();
-        if(deviceArray.size()>0)
-        {
-            for(BluetoothDevice device:deviceArray)
-            {
-                pairedDevices.add(device.getName());
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_CANCELED)
-        {
-            Toast.makeText(getApplicationContext(), "Bluetooth must be enable to continue", Toast.LENGTH_LONG).show();
-            finish();
-        }
     }
 
     @Override
@@ -168,4 +69,5 @@ public class CreateMatchActivity extends ActionBarActivity implements AdapterVie
     {
 
     }
+
 }
