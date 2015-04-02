@@ -8,9 +8,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
@@ -23,20 +24,16 @@ import java.util.UUID;
 
 public class MultiplayerGameService
 {
-    private static final String TAG = "MultiplayerGameService";
 
     // Name for the SDP record when creating server socket
     private static final String NAME_SECURE = "BluetoothChatSecure";
-    private static final String NAME_INSECURE = "BluetoothChatInsecure";
 
     // Unique UUID for this application
     private static final UUID MY_UUID_SECURE = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
-    private static final UUID MY_UUID_INSECURE = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private final BluetoothAdapter btAdapter;
     private final Handler btHandler;
     private AcceptThread btSecureAcceptThread;
-    private AcceptThread btInsecureAcceptThread;
     private ConnectThread btConnectThread;
     private ConnectedThread btConnectedThread;
     private int btState;
@@ -107,13 +104,8 @@ public class MultiplayerGameService
         // Start the thread to listen on a BluetoothServerSocket
         if (btSecureAcceptThread == null)
         {
-            btSecureAcceptThread = new AcceptThread(true);
+            btSecureAcceptThread = new AcceptThread();
             btSecureAcceptThread.start();
-        }
-        if (btInsecureAcceptThread == null)
-        {
-            btInsecureAcceptThread = new AcceptThread(false);
-            btInsecureAcceptThread.start();
         }
     }
 
@@ -121,9 +113,8 @@ public class MultiplayerGameService
      * Start the ConnectThread to initiate a connection to a remote device.
      *
      * @param device The BluetoothDevice to connect
-     * @param secure Socket Security type - Secure (true) , Insecure (false)
      */
-    public synchronized void connect(BluetoothDevice device, boolean secure)
+    public synchronized void connect(BluetoothDevice device)
     {
 
         // Cancel any thread attempting to make a connection
@@ -144,7 +135,7 @@ public class MultiplayerGameService
         }
 
         // Start the thread to connect with the given device
-        btConnectThread = new ConnectThread(device, secure);
+        btConnectThread = new ConnectThread(device);
         btConnectThread.start();
         setState(STATE_CONNECTING);
     }
@@ -155,7 +146,7 @@ public class MultiplayerGameService
      * @param socket The BluetoothSocket on which the connection was made
      * @param device The BluetoothDevice that has been connected
      */
-    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device, final String socketType)
+    public synchronized void connected(BluetoothSocket socket, BluetoothDevice device)
     {
         // Cancel the thread that completed the connection
         if (btConnectThread != null)
@@ -177,14 +168,9 @@ public class MultiplayerGameService
             btSecureAcceptThread.cancel();
             btSecureAcceptThread = null;
         }
-        if (btInsecureAcceptThread != null)
-        {
-            btInsecureAcceptThread.cancel();
-            btInsecureAcceptThread = null;
-        }
 
         // Start the thread to manage the connection and perform transmissions
-        btConnectedThread = new ConnectedThread(socket, socketType);
+        btConnectedThread = new ConnectedThread(socket);
         btConnectedThread.start();
 
         // Send the name of the connected device back to the UI Activity
@@ -219,12 +205,6 @@ public class MultiplayerGameService
         {
             btSecureAcceptThread.cancel();
             btSecureAcceptThread = null;
-        }
-
-        if (btInsecureAcceptThread != null)
-        {
-            btInsecureAcceptThread.cancel();
-            btInsecureAcceptThread = null;
         }
         setState(STATE_NONE);
     }
@@ -289,36 +269,23 @@ public class MultiplayerGameService
     {
         // The local server socket
         private final BluetoothServerSocket mmServerSocket;
-        private String mSocketType;
 
-        public AcceptThread(boolean secure)
+        public AcceptThread()
         {
             BluetoothServerSocket tmp = null;
-            mSocketType = secure ? "Secure" : "Insecure";
 
             // Create a new listening server socket
             try
             {
-                if (secure)
-                {
-                    tmp = btAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
-                }
-                else
-                {
-                    tmp = btAdapter.listenUsingInsecureRfcommWithServiceRecord(
-                            NAME_INSECURE, MY_UUID_INSECURE);
-                }
+                tmp = btAdapter.listenUsingRfcommWithServiceRecord(NAME_SECURE, MY_UUID_SECURE);
             }
-            catch (IOException e)
-            {
-                Log.e(TAG, "Socket Type: " + mSocketType + "listen() failed", e);
-            }
+            catch (IOException e) {}
             mmServerSocket = tmp;
         }
 
         public void run()
         {
-            setName("AcceptThread" + mSocketType);
+            setName("AcceptThread");
 
             BluetoothSocket socket = null;
 
@@ -346,7 +313,7 @@ public class MultiplayerGameService
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
                                 // Situation normal. Start the connected thread.
-                                connected(socket, socket.getRemoteDevice(), mSocketType);
+                                connected(socket, socket.getRemoteDevice());
                                 break;
                             case STATE_NONE:
                             case STATE_CONNECTED:
@@ -382,26 +349,17 @@ public class MultiplayerGameService
     {
         private final BluetoothSocket mmSocket;
         private final BluetoothDevice mmDevice;
-        private String mSocketType;
 
-        public ConnectThread(BluetoothDevice device, boolean secure)
+        public ConnectThread(BluetoothDevice device)
         {
             mmDevice = device;
             BluetoothSocket tmp = null;
-            mSocketType = secure ? "Secure" : "Insecure";
 
             // Get a BluetoothSocket for a connection with the
             // given BluetoothDevice
             try
             {
-                if (secure)
-                {
-                    tmp = device.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
-                }
-                else
-                {
-                    tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
-                }
+                tmp = device.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
             }
             catch (IOException e){}
             mmSocket = tmp;
@@ -409,7 +367,7 @@ public class MultiplayerGameService
 
         public void run()
         {
-            setName("ConnectThread" + mSocketType);
+            setName("ConnectThread");
 
             // Always cancel discovery because it will slow down a connection
             btAdapter.cancelDiscovery();
@@ -440,7 +398,7 @@ public class MultiplayerGameService
             }
 
             // Start the connected thread
-            connected(mmSocket, mmDevice, mSocketType);
+            connected(mmSocket, mmDevice);
         }
 
         public void cancel()
@@ -449,10 +407,7 @@ public class MultiplayerGameService
             {
                 mmSocket.close();
             }
-            catch (IOException e)
-            {
-                Log.e(TAG, "close() of connect " + mSocketType + " socket failed", e);
-            }
+            catch (IOException e) {}
         }
     }
 
@@ -466,7 +421,7 @@ public class MultiplayerGameService
         private final InputStream mmInStream;
         private final OutputStream mmOutStream;
 
-        public ConnectedThread(BluetoothSocket socket, String socketType)
+        public ConnectedThread(BluetoothSocket socket)
         {
             mmSocket = socket;
             InputStream tmpIn = null;
@@ -498,8 +453,7 @@ public class MultiplayerGameService
                     bytes = mmInStream.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
-                    btHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer)
-                            .sendToTarget();
+                    btHandler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 }
                 catch (IOException e)
                 {
@@ -522,9 +476,6 @@ public class MultiplayerGameService
             {
                 mmOutStream.write(buffer);
 
-                // Share the sent message back to the UI Activity
-                btHandler.obtainMessage(Constants.MESSAGE_WRITE, -1, -1, buffer)
-                        .sendToTarget();
             }
             catch (IOException e) {}
         }

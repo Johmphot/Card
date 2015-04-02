@@ -21,8 +21,8 @@
         android:layout_height="wrap_content"
         android:text="Draw"
         android:id="@+id/draw_button"
-        android:layout_alignBottom="@+id/playercard1"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
     <ImageView
         android:layout_width="wrap_content"
@@ -39,54 +39,15 @@
         android:layout_height="wrap_content"
         android:text="Draw"
         android:id="@+id/draw_button_2"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignTop="@+id/playercard2"
+        android:layout_alignParentStart="true"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ready!"
         android:id="@+id/ready_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/playercard3"
-        android:layout_alignStart="@+id/draw_button_3"
-        android:layout_alignTop="@+id/playercard1" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/playercard3"
-        android:cropToPadding="false"
-        android:longClickable="false"
-        android:src="@drawable/spades2"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentStart="true"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/playercard4"
-        android:cropToPadding="false"
-        android:longClickable="false"
-        android:src="@drawable/spades2"
-        android:layout_centerVertical="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Draw"
-        android:id="@+id/draw_button_3"
-        android:layout_below="@+id/playercard3"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="32dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Draw"
-        android:id="@+id/draw_button_4"
-        android:layout_above="@+id/playercard4"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="32dp" />
 </RelativeLayout>

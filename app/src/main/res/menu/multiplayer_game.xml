@@ -24,11 +24,6 @@
         android:title="Secure connect"/>
 
     <item
-        android:id="@+id/insecure_connect_scan"
-        app:showAsAction="never"
-        android:title="Insecure connect"/>
-
-    <item
         android:id="@+id/discoverable"
         app:showAsAction="never"
         android:title="Discoverable"/>

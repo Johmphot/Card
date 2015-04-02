@@ -5,7 +5,7 @@ import java.util.Collections;
 
 public class Game
 {
-    int playerNum = 4;
+    int playerNum = 2;
     Card[] playerCard = new Card[playerNum];
     CardSet set = new CardSet();
     ArrayList<Card> deck = set.getDeck();

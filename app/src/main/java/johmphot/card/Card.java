@@ -1,8 +1,13 @@
 package johmphot.card;
 
-import java.lang.String;public class Card {
+import java.io.Serializable;
+import java.lang.String;
 
-	public int value, cardReference ;
+public class Card implements Serializable
+{
+    private static final long serialVersionUID = 1L;
+
+    public int value, cardReference ;
 	public String name, category;
 	
 	public int getValue() {
@@ -36,5 +41,5 @@ import java.lang.String;public class Card {
 		this.name = name;
 		this.category = category;
 	}
-	
+
 }
