@@ -16,11 +16,16 @@
 
 package johmphot.card;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothServerSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,12 +33,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -44,7 +46,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 /**
@@ -58,28 +61,13 @@ public class MultiplayerGameActivity extends Fragment
 {
 
     // Intent request codes
-    private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
+    private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 3;
     private boolean isServer = false;
 
     // Layout Views
     private Button drawButton, readyButton;
     private ImageView playerCardImage, opponentCardImage;
-
-    /**
-     * Name of the connected device
-     */
-    private String btConnectedDeviceName = null;
-
-    /**
-     * Array adapter for the conversation thread
-     */
-    private ArrayAdapter<String> btConversationArrayAdapter;
-
-    /**
-     * String buffer for outgoing messages
-     */
-    private StringBuffer btOutStringBuffer;
 
     /**
      * Local Bluetooth adapter
@@ -95,8 +83,7 @@ public class MultiplayerGameActivity extends Fragment
      * Game object
      */
     MultiplayerGame game;
-    private BluetoothDevice opponent;
-    ArrayList syncData = null;
+    ArrayList<Card> cards = new ArrayList<Card>();
 
 
     @Override
@@ -105,6 +92,12 @@ public class MultiplayerGameActivity extends Fragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+//        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+//        IntentFilter filter2 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED);
+//        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+//        getActivity().registerReceiver(mReceiver, filter1);
+//        getActivity().registerReceiver(mReceiver, filter2);
+//        getActivity().registerReceiver(mReceiver, filter3);
         // If the adapter is null, then Bluetooth is not supported
         if (btAdapter == null)
         {
@@ -132,7 +125,10 @@ public class MultiplayerGameActivity extends Fragment
             {
                 setupGame();
             }
-            catch (IOException e) {}
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -142,6 +138,7 @@ public class MultiplayerGameActivity extends Fragment
         if (btGameService != null) {
             btGameService.stop();
         }
+        //getActivity().unregisterReceiver(mReceiver);
     }
 
     @Override
@@ -180,45 +177,50 @@ public class MultiplayerGameActivity extends Fragment
      */
     private void setupGame() throws IOException
     {
-        if(btAdapter.getBondedDevices().size()<=1 && !btAdapter.getBondedDevices().isEmpty())
+        if(btAdapter.getScanMode()==BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
         {
-            opponent = btAdapter.getBondedDevices().iterator().next();
+            isServer = true;
         }
 
         // Initialize the MultiplayerGameService to perform bluetooth connections
         btGameService = new MultiplayerGameService(getActivity(), mHandler);
 
-        // Initialize the buffer for outgoing messages
-        btOutStringBuffer = new StringBuffer("");
-
         game = new MultiplayerGame();
-        game.start();
+        game.startServer();
+
         if(isServer)
         {
+            //game.startServer();
+            game.playerCard = game.draw();
+            game.getNextCard();
+            updateUI();
             sendData();
         }
         else
         {
-            if(syncData!=null)
+            if(game.nextCard!=null)
             {
-                game.deck = (ArrayList) syncData.get(0);
+                game.playerCard = game.draw();
+                updateUI();
+                sendData();
             }
         }
-        game.playerCard = game.draw();
-        updateUI();
-        sendData();
 
 
         // Initialize the send button with a listener that for click events
         drawButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 game.playerCard = game.draw();
+                game.getNextCard();
                 updateUI();
                 try
                 {
                     sendData();
                 }
-                catch (IOException e) {}
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -241,7 +243,6 @@ public class MultiplayerGameActivity extends Fragment
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
             startActivity(discoverableIntent);
-            isServer = true;
         }
     }
 
@@ -258,15 +259,16 @@ public class MultiplayerGameActivity extends Fragment
             return;
         }
 
-        //syncData = new ArrayList();
-        //syncData.add(game.deck);
-        //syncData.add(game.playerCard);
         if (game.deck!=null)
         {
             // Get the message bytes and tell the MultiplayerGameService to write
-            //byte[] send = serialize(syncData);
-            byte[] send = serialize(game.playerCard);
+            //cards = (ArrayList<Card>) game.deck.clone();
+            cards.add(game.playerCard);
+            cards.add(game.nextCard);
+
+            byte[] send = Serializer.serialize(cards);
             btGameService.write(send);
+            cards.clear();
         }
     }
 
@@ -285,21 +287,28 @@ public class MultiplayerGameActivity extends Fragment
                 case Constants.MESSAGE_WRITE:
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    // construct a string from the valid bytes in the buffer
                     try
                     {
-                        //syncData = deserialize(readBuf);
-                        //game.deck = (ArrayList<Card>) syncData.get(0);
-                        //game.opponentCard = (Card) syncData.get(1);
-                        game.opponentCard = deserialize(readBuf);
+                        ArrayList<Card> tmp = (ArrayList<Card>) Serializer.deserialize(readBuf);
+                        game.opponentCard = tmp.get(0);
                         updateUI();
+                        game.nextCard = tmp.get(1);
                     }
-                    catch (IOException e) {}
-                    catch (ClassNotFoundException e) {}
+                    catch (IOException e1)
+                    {
+                        e1.printStackTrace();
+                    }
+                    catch (ClassNotFoundException e2)
+                    {
+                        e2.printStackTrace();
+                    }
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
                     // save the connected device's name
-                    btConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
+                    /*
+                        Name of the connected device
+                    */
+                    String btConnectedDeviceName = msg.getData().getString(Constants.DEVICE_NAME);
                     if (null != activity)
                     {
                         Toast.makeText(activity, "Connected to "+ btConnectedDeviceName, Toast.LENGTH_SHORT).show();
@@ -317,10 +326,12 @@ public class MultiplayerGameActivity extends Fragment
 
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        switch (requestCode) {
-            case REQUEST_CONNECT_DEVICE_SECURE:
+        switch (requestCode)
+        {
+            case REQUEST_CONNECT_DEVICE:
                 // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK)
+                {
                     connectDevice(data);
                 }
                 break;
@@ -334,7 +345,10 @@ public class MultiplayerGameActivity extends Fragment
                     {
                         setupGame();
                     }
-                    catch (IOException e) {}
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
                 else
                 {
@@ -360,18 +374,12 @@ public class MultiplayerGameActivity extends Fragment
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        //inflater.inflate(R.menu.multiplayer_game, menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.secure_connect_scan: {
                 // Launch the DeviceListActivity to see devices and do scan
                 Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
                 return true;
             }
             case R.id.discoverable: {
@@ -389,25 +397,80 @@ public class MultiplayerGameActivity extends Fragment
         if(game.opponentCard!=null) opponentCardImage.setImageResource(game.opponentCard.getCardReference());
     }
 
-    public byte[] serialize(Card card) throws IOException
-    {
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        ObjectOutputStream o = new ObjectOutputStream(b);
-        o.writeObject(card);
-        return b.toByteArray();
-    }
-    /*public ArrayList deserialize(byte[] bytes) throws IOException, ClassNotFoundException
-    {
-        ByteArrayInputStream b = new ByteArrayInputStream(bytes);
-        ObjectInputStream o = new ObjectInputStream(b);
-        return (ArrayList) o.readObject();
-    }*/
 
-    public Card deserialize(byte[] bytes) throws IOException, ClassNotFoundException
-    {
-        ByteArrayInputStream b = new ByteArrayInputStream(bytes);
-        ObjectInputStream o = new ObjectInputStream(b);
-        return (Card) o.readObject();
-    }
+//    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String action = intent.getAction();
+//            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+//
+//            if (BluetoothDevice.ACTION_FOUND.equals(action))
+//            {
+//                //Device found
+//            }
+//            else if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action))
+//            {
+//                if(dataReceived!=null)
+//                {
+//                    game.deck = dataReceived.deck;
+//                    game.playerCard = game.draw();
+//                    updateUI();
+//                    try
+//                    {
+//                        sendData();
+//                    }
+//                    catch (IOException e)
+//                    {
+//                        e.printStackTrace();
+//                    }
+//                }
+//
+//            }
+//            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
+//            {
+//                //Done searching
+//            }
+//            else if (BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED.equals(action))
+//            {
+//                //Device is about to disconnect
+//            }
+//            else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action))
+//            {
+//                //Device has disconnected
+//            }
+//        }
+//    };
+
+//    private class InitializeAsync extends AsyncTask<Void, Void, Void>
+//    {
+//        @Override
+//        protected Void doInBackground(Void... params)
+//        {
+//            try
+//            {
+//                sendData();
+//            }
+//            catch (IOException e)
+//            {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void result)
+//        {
+//            game.playerCard = game.draw();
+//            updateUI();
+//            try
+//            {
+//                sendData();
+//            }
+//            catch (IOException e)
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 }
 

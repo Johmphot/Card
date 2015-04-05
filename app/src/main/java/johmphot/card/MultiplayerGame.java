@@ -8,31 +8,37 @@ import java.util.Collections;
  */
 public class MultiplayerGame
 {
-    int playerNum = 2;
     Card playerCard = null;
     Card opponentCard = null;
+    Card nextCard = null; //buffer
     CardSet set = new CardSet();
-    ArrayList<Card> deck = set.getDeck();
+    ArrayList<Card> deck;
 
-    public void start()
+    public void startServer()
     {
+        deck = set.getDeck();
         Collections.shuffle(deck);
+        getNextCard();
     }
 
     public Card draw()
     {
-        if(deck.size()!=0)
+        if (nextCard!=null)
         {
-            Card x = deck.get(0);
-            deck.remove(0);
+            Card x = nextCard;
             return x;
         }
         return null;
     }
 
-    public Card getPlayerCard()
+    public void getNextCard()
     {
-        return playerCard;
+        if(deck.size()!=0)
+        {
+            Card x = deck.get(0);
+            deck.remove(0);
+            nextCard = x;
+        }
     }
 
     public Card findMin (Card x, Card y)
