@@ -113,7 +113,7 @@ public class GameActivity extends ActionBarActivity
     {
         for(int i=0;i<round.playerNum;i++)
         {
-            playerCardImage[i].setImageResource(round.getPlayerCard(i).getCardReference());
+            playerCardImage[i].setImageResource(round.getPlayerCard(i).getImage());
         }
     }
 }

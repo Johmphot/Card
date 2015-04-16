@@ -6,38 +6,197 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="johmphot.card.MultiplayerGameActivity">
 
-    <ImageView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/playerCard"
-        android:src="@drawable/clubs2"
-        android:layout_marginBottom="83dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/opponentCard"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/opponentCard"
-        android:src="@drawable/clubs2"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Draw"
-        android:id="@+id/draw_button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ready!"
-        android:id="@+id/ready_button"
-        android:layout_above="@+id/playerCard"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout8"
+        android:layout_alignWithParentIfMissing="false"
+        android:rotation="180"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="95dp"/>
+        android:layout_marginBottom="30dp"
+        android:layout_centerVertical="true">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/linearLayout9"
+        android:layout_alignWithParentIfMissing="false"
+        android:layout_marginTop="80dp"
+        android:layout_below="@+id/linearLayout8"
+        android:layout_alignStart="@+id/linearLayout8">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout10"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Opponent"
+        android:id="@+id/opponent_label"
+        android:layout_below="@+id/blood24"
+        android:layout_alignParentEnd="true"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout11"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/blood11"
+            android:src="@drawable/whp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/blood13" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/blood12"
+            android:src="@drawable/whp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/blood13" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/blood13"
+            android:src="@drawable/whp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/blood13" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/blood14"
+            android:src="@drawable/whp"
+            android:layout_alignParentBottom="true"
+            android:layout_toStartOf="@+id/blood13" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="You"
+        android:id="@+id/you_label"
+        android:layout_above="@+id/linearLayout11"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:id="@+id/card1"
+        android:src="@drawable/blackcard"
+        android:nestedScrollingEnabled="false"
+        android:onClick="ch11"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_alignTop="@+id/card2"
+        android:layout_toStartOf="@+id/card2"/>
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:id="@+id/card2"
+        android:src="@drawable/blackcard"
+        android:onClick="ch12"
+        android:nestedScrollingEnabled="false"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_alignTop="@+id/card3"
+        android:layout_toStartOf="@+id/linearLayout9"/>
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:id="@+id/card4"
+        android:src="@drawable/blackcard"
+        android:onClick="ch14"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_alignTop="@+id/card3"
+        android:layout_toEndOf="@+id/card3"/>
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:id="@+id/card3"
+        android:src="@drawable/blackcard"
+        android:onClick="ch13"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_below="@+id/linearLayout8"
+        android:layout_toEndOf="@+id/linearLayout9"/>
+
+    <ImageView
+        android:layout_width="70dp"
+        android:layout_height="100dp"
+        android:id="@+id/field_card"
+        android:src="@drawable/blackcard"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_marginTop="45dp"
+        android:layout_below="@+id/opponent_label"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/blood24"
+        android:src="@drawable/whp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/blood23"
+        android:src="@drawable/whp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/blood24"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/blood22"
+        android:src="@drawable/whp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/blood23"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/blood21"
+        android:src="@drawable/whp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/blood22"/>
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Turn"
+        android:id="@+id/end_button"
+        android:layout_alignBottom="@+id/linearLayout11"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/card1"/>
 
 </RelativeLayout>

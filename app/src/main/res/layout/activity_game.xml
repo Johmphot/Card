@@ -12,7 +12,6 @@
         android:id="@+id/playercard1"
         android:cropToPadding="false"
         android:longClickable="false"
-        android:src="@drawable/hearts2"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
 
@@ -30,7 +29,6 @@
         android:id="@+id/playercard2"
         android:cropToPadding="false"
         android:longClickable="false"
-        android:src="@drawable/spades2"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 

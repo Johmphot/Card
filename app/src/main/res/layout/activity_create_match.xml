@@ -11,13 +11,6 @@
         android:layout_height="match_parent"
         android:id="@+id/frame_view">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Please connect to another device"
-            android:id="@+id/warning_text"
-            android:layout_gravity="center"/>
     </FrameLayout>
 
 </RelativeLayout>

@@ -7,8 +7,8 @@ public class Card implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    public int value, cardReference ;
-	public String name, category;
+    public int value, image ;
+	public String name;
 	
 	public int getValue() {
 		return value;
@@ -16,11 +16,11 @@ public class Card implements Serializable
 	public void setValue(int value) {
 		this.value = value;
 	}
-	public int getCardReference() {
-		return cardReference;
+	public int getImage() {
+		return image;
 	}
-	public void setCardReference(int cardReference) {
-		this.cardReference = cardReference;
+	public void setImage(int image) {
+		this.image = image;
 	}
 	public String getName() {
 		return name;
@@ -28,18 +28,12 @@ public class Card implements Serializable
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
-	public Card(int value, int cardReference, String name, String category) {
-		//super();
+
+    public Card(int value, int image, String name)
+    {
 		this.value = value;
-		this.cardReference = cardReference;
+		this.image = image;
 		this.name = name;
-		this.category = category;
 	}
 
 }
