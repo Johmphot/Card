@@ -10,10 +10,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import johmphot.card.bluetooth.CreateMatchActivity;
+import johmphot.card.local.MainLocal;
+
 
 public class MainActivity extends ActionBarActivity {
 
-    private Button start, createMultiplayer, joinMultiplayer;
+    private Button localMultiplayer, btMultiplayer;
     BluetoothAdapter btAdapter;
 
     @Override
@@ -35,22 +38,20 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        start = (Button)findViewById(R.id.start_button);
-        start.setOnClickListener(new View.OnClickListener(){
+        localMultiplayer = (Button)findViewById(R.id.local_multiplayer_button);
+        localMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                Intent intent = new Intent(MainActivity.this,GameActivity.class);
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, MainLocal.class);
                 startActivity(intent);
                 finish();
             }
         });
 
-        createMultiplayer = (Button)findViewById(R.id.CreateMultiplayer_button);
-        createMultiplayer.setOnClickListener(new View.OnClickListener(){
+        btMultiplayer = (Button)findViewById(R.id.bt_multiplayer_button);
+        btMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CreateMatchActivity.class);
                 startActivity(intent);
             }
@@ -69,11 +70,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_CANCELED)
-        {
-            Toast.makeText(getApplicationContext(), "Bluetooth must be enable to continue", Toast.LENGTH_LONG).show();
-            finish();
-        }
+//        if(resultCode==RESULT_CANCELED)
+//        {
+//            Toast.makeText(getApplicationContext(), "Bluetooth must be enable to continue", Toast.LENGTH_LONG).show();
+//            finish();
+//        }
     }
 
 

@@ -28,12 +28,28 @@
             android:label="@string/title_activity_finish" >
         </activity>
         <activity
-            android:name=".CreateMatchActivity"
+            android:name=".bluetooth.CreateMatchActivity"
             android:label="@string/title_activity_create_match" >
         </activity>
         <activity
-            android:name=".DeviceListActivity"
+            android:name=".bluetooth.DeviceListActivity"
             android:label="@string/select_device" >
+        </activity>
+        <activity
+            android:name=".local.MainLocal"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".local.end"
+            android:label="@string/title_activity_end" >
+        </activity>
+        <activity
+            android:name=".local.p1"
+            android:label="@string/title_activity_p1" >
+        </activity>
+        <activity
+            android:name=".local.p2"
+            android:label="@string/title_activity_p2" >
         </activity>
     </application>
 

@@ -10,6 +10,9 @@
     <string name="title_activity_mulitplayer_menu">MulitplayerMenuActivity</string>
     <string name="title_activity_create_match">CreateMatchActivity</string>
     <string name="title_activity_join_match">JoinMatchActivity</string>
+    <string name="title_activity_end">end</string>
+    <string name="title_activity_p1">p1</string>
+    <string name="title_activity_p2">p2</string>
 
     <!--  BluetoothChat -->
     <string name="send">Send</string>

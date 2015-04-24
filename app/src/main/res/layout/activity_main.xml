@@ -16,8 +16,8 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/start_button"
+        android:text="Local Multiplayer"
+        android:id="@+id/local_multiplayer_button"
         android:layout_marginBottom="75dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -26,10 +26,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Multiplayer Match"
-        android:id="@+id/CreateMultiplayer_button"
+        android:text="Bluetooth Multiplayer"
+        android:id="@+id/bt_multiplayer_button"
         android:clickable="true"
-        android:layout_above="@+id/start_button"
+        android:layout_above="@+id/local_multiplayer_button"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp" />
 
