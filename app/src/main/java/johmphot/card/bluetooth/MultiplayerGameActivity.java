@@ -63,6 +63,7 @@ public class MultiplayerGameActivity extends Fragment
     private ImageView[] handCard = new ImageView[4];
     private ImageView fieldCardImage;
     private Button endTurnButton;
+    private Runnable transition;
 
     /**
      * Local Bluetooth adapter
@@ -73,7 +74,6 @@ public class MultiplayerGameActivity extends Fragment
      * Member object for the chat services
      */
     private MultiplayerGameService btGameService = null;
-    FragmentActivity activity;
 
     /**
      * Game object
@@ -90,13 +90,11 @@ public class MultiplayerGameActivity extends Fragment
         // If the adapter is null, then Bluetooth is not supported
         if (btAdapter == null)
         {
-            activity = getActivity();
+            FragmentActivity activity = getActivity();
             Toast.makeText(activity, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             activity.finish();
         }
 
-        // Initialize the MultiplayerGameService to perform bluetooth connections
-        btGameService = new MultiplayerGameService(getActivity(), mHandler);
     }
 
 
@@ -109,19 +107,18 @@ public class MultiplayerGameActivity extends Fragment
         if (!btAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
         }
-//        else if (btGameService == null)
-//        {
-//            try
-//            {
-//                setupGame();
-//            }
-//            catch (IOException e)
-//            {
-//                e.printStackTrace();
-//            }
-//        }
+        else if (btGameService == null)
+        {
+            try
+            {
+                setupGame();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -183,6 +180,7 @@ public class MultiplayerGameActivity extends Fragment
      */
     public void setupGame() throws IOException
     {
+        btGameService = new MultiplayerGameService(getActivity(), mHandler);
 
         game = new MultiplayerGame();
         game.start();
@@ -242,9 +240,33 @@ public class MultiplayerGameActivity extends Fragment
             handCard[i].setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
 
+                    game.buffer = game.playerCard[n];
+//                    if(!game.canAttack || game.playerHP==4)
+//                    {
+//                        if(game.buffer.getValue()==1 ||game.buffer.getValue()==2)
+//                        {
+//                            //do nothing
+//                        }
+//                        else
+//                        {
+//                            game.playerCard[n]=null;
+//                            checkUsedCard(game.buffer);
+//                            try
+//                            {
+//                                sendData(game.buffer);
+//                            }
+//                            catch (IOException e)
+//                            {
+//                                e.printStackTrace();
+//                            }
+//                            updateBloodUI();
+//                            updateHandUI();
+//                            updateFieldUI();
+//                        }
+//                    }
+//                    else
                     if (handCard[n]!=null)
                     {
-                        game.buffer = game.playerCard[n];
                         game.playerCard[n]=null;
                         checkUsedCard(game.buffer);
                         try
@@ -413,6 +435,7 @@ public class MultiplayerGameActivity extends Fragment
             if(game.playerCard[i]==null)
             {
                 handCard[i].setImageResource(R.drawable.blackcard);
+                handCard[i].setEnabled(false);
             }
             else
             {
@@ -530,6 +553,13 @@ public class MultiplayerGameActivity extends Fragment
                 updateBloodUI();
                 Log.i("use heal card", ""+game.playerHP);
                 break;
+            case 3:
+                //meesuk
+                break;
+            case 4:
+                game.swapHP();
+                updateBloodUI();
+                break;
             default:
                 break;
         }
@@ -566,6 +596,13 @@ public class MultiplayerGameActivity extends Fragment
                 game.opponentHeal();
                 updateBloodUI();
                 Log.i("opponent heal", ""+game.opponentHP);
+                break;
+            case 3:
+                //meesuk
+                break;
+            case 4:
+                game.swapHP();
+                updateBloodUI();
                 break;
             default:
                 break;

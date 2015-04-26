@@ -15,8 +15,8 @@ public class MultiplayerGame
     Card buffer = null;
     CardSet set = new CardSet();
     ArrayList<Card> deck;
-    boolean isYourTurn = false;
-    boolean canAttack = false;
+    boolean isYourTurn = true;
+    boolean canAttack = true;
 
     public void start()
     {
