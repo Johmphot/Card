@@ -19,13 +19,12 @@ package johmphot.card.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -33,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -64,6 +64,7 @@ public class MultiplayerGameActivity extends Fragment
     private ImageView fieldCardImage;
     private Button endTurnButton;
     private Runnable transition;
+    private Vibrator vibrator;
 
     /**
      * Local Bluetooth adapter
@@ -151,6 +152,89 @@ public class MultiplayerGameActivity extends Fragment
         return inflater.inflate(R.layout.fragment_multiplayer_game, container, false);
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (requestCode)
+        {
+            case REQUEST_CONNECT_DEVICE:
+                // When DeviceListActivity returns with a device to connect
+                if (resultCode == Activity.RESULT_OK)
+                {
+                    connectDevice(data);
+                }
+                break;
+
+            case REQUEST_ENABLE_BT:
+                // When the request to enable Bluetooth returns
+                if (resultCode == Activity.RESULT_OK)
+                {
+                    // Bluetooth is now enabled, so set up a chat session
+                    try
+                    {
+                        setupGame();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    // User did not enable Bluetooth or an error occurred
+                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                }
+        }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.secure_connect_scan: {
+                // Launch the DeviceListActivity to see devices and do scan
+                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
+                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
+                return true;
+            }
+            case R.id.discoverable: {
+                // Ensure this device is discoverable by others
+                ensureDiscoverable();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Establish connection with other device
+     *
+     * @param data   An {@link android.content.Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
+     */
+    private void connectDevice(Intent data) {
+        // Get the device MAC address
+        String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+        // Get the BluetoothDevice object
+        BluetoothDevice device = btAdapter.getRemoteDevice(address);
+        // Attempt to connect to the device
+        btGameService.connect(device);
+    }
+
+
+    /**
+     * Makes this device discoverable.
+     */
+    private void ensureDiscoverable()
+    {
+        if (btAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+        {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+            startActivity(discoverableIntent);
+        }
+    }
+
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState)
     {
@@ -159,11 +243,19 @@ public class MultiplayerGameActivity extends Fragment
         yourBlood[1] = (ImageView) view.findViewById(R.id.blood12);
         yourBlood[2] = (ImageView) view.findViewById(R.id.blood13);
         yourBlood[3] = (ImageView) view.findViewById(R.id.blood14);
+        yourBlood[0].setImageResource(R.drawable.ghp);
+        yourBlood[1].setImageResource(R.drawable.yhp);
+        yourBlood[2].setImageResource(R.drawable.ohp);
+        yourBlood[3].setImageResource(R.drawable.rhp);
 
         opponentBlood[0] = (ImageView) view.findViewById(R.id.blood21);
         opponentBlood[1] = (ImageView) view.findViewById(R.id.blood22);
         opponentBlood[2] = (ImageView) view.findViewById(R.id.blood23);
         opponentBlood[3] = (ImageView) view.findViewById(R.id.blood24);
+        opponentBlood[0].setImageResource(R.drawable.ghp);
+        opponentBlood[1].setImageResource(R.drawable.yhp);
+        opponentBlood[2].setImageResource(R.drawable.ohp);
+        opponentBlood[3].setImageResource(R.drawable.rhp);
 
         handCard[0] = (ImageView) view.findViewById(R.id.card1);
         handCard[1] = (ImageView) view.findViewById(R.id.card2);
@@ -171,8 +263,18 @@ public class MultiplayerGameActivity extends Fragment
         handCard[3] = (ImageView) view.findViewById(R.id.card4);
 
         fieldCardImage = (ImageView) view.findViewById(R.id.field_card);
+        fieldCardImage.setVisibility(View.INVISIBLE);
 
         endTurnButton = (Button) view.findViewById(R.id.end_button);
+
+        transition = new Runnable() {
+            @Override
+            public void run(){
+                fieldCardImage.animate().setDuration(2000).setInterpolator(new OvershootInterpolator()).translationY(200);
+            }
+        };
+
+        vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     /**
@@ -203,34 +305,6 @@ public class MultiplayerGameActivity extends Fragment
         }
     }
 
-    /**
-     * Makes this device discoverable.
-     */
-    private void ensureDiscoverable()
-    {
-        if (btAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-        {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-            startActivity(discoverableIntent);
-        }
-    }
-
-    /**
-     * Sends a message.
-     */
-
-    private void sendData(Card c) throws IOException
-    {
-        // Check that we're actually connected before trying anything
-        if (btGameService.getState() != MultiplayerGameService.STATE_CONNECTED)
-        {
-            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        byte[] send = Serializer.serialize(c);
-        btGameService.write(send);
-    }
 
     private void setHandButton()
     {
@@ -267,6 +341,12 @@ public class MultiplayerGameActivity extends Fragment
 //                    else
                     if (handCard[n]!=null)
                     {
+//                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+//                        params.setMargins(fieldCardImage.getLeft(),200,0,0);
+//                        params.height = 100;
+//                        params.width = 70;
+//                        fieldCardImage.setLayoutParams(params);
+                        fieldCardImage.setVisibility(View.VISIBLE);
                         game.playerCard[n]=null;
                         checkUsedCard(game.buffer);
                         try
@@ -297,6 +377,7 @@ public class MultiplayerGameActivity extends Fragment
                     handCard[i].setEnabled(false);
                 }
                 endTurnButton.setEnabled(false);
+                fieldCardImage.setVisibility(View.INVISIBLE);
                 game.endTurn();
                 clearField();
                 try
@@ -311,7 +392,21 @@ public class MultiplayerGameActivity extends Fragment
         });
     }
 
+    /**
+     * Sends a message.
+     */
 
+    private void sendData(Card c) throws IOException
+    {
+        // Check that we're actually connected before trying anything
+        if (btGameService.getState() != MultiplayerGameService.STATE_CONNECTED)
+        {
+            Toast.makeText(getActivity(), R.string.not_connected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte[] send = Serializer.serialize(c);
+        btGameService.write(send);
+    }
 
     /**
      * The Handler that gets information back from the MultiplayerGameService
@@ -329,8 +424,10 @@ public class MultiplayerGameActivity extends Fragment
                     try
                     {
                         game.buffer = (Card) Serializer.deserialize(readBuf);
+                        fieldCardImage.setVisibility(View.VISIBLE);
                         checkBufferCard();
                         updateFieldUI();
+                        transition.run();
                     }
                     catch (Exception e)
                     {
@@ -358,72 +455,6 @@ public class MultiplayerGameActivity extends Fragment
         }
     };
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        switch (requestCode)
-        {
-            case REQUEST_CONNECT_DEVICE:
-                // When DeviceListActivity returns with a device to connect
-                if (resultCode == Activity.RESULT_OK)
-                {
-                    connectDevice(data);
-                }
-                break;
-
-            case REQUEST_ENABLE_BT:
-                // When the request to enable Bluetooth returns
-                if (resultCode == Activity.RESULT_OK)
-                {
-                    // Bluetooth is now enabled, so set up a chat session
-                    try
-                    {
-                        setupGame();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                else
-                {
-                    // User did not enable Bluetooth or an error occurred
-                    Toast.makeText(getActivity(), R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
-                }
-        }
-    }
-
-    /**
-     * Establish connection with other device
-     *
-     * @param data   An {@link android.content.Intent} with {@link DeviceListActivity#EXTRA_DEVICE_ADDRESS} extra.
-     */
-    private void connectDevice(Intent data) {
-        // Get the device MAC address
-        String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
-        // Get the BluetoothDevice object
-        BluetoothDevice device = btAdapter.getRemoteDevice(address);
-        // Attempt to connect to the device
-        btGameService.connect(device);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.secure_connect_scan: {
-                // Launch the DeviceListActivity to see devices and do scan
-                Intent serverIntent = new Intent(getActivity(), DeviceListActivity.class);
-                startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);
-                return true;
-            }
-            case R.id.discoverable: {
-                // Ensure this device is discoverable by others
-                ensureDiscoverable();
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      *  Update UI
@@ -436,6 +467,7 @@ public class MultiplayerGameActivity extends Fragment
             {
                 handCard[i].setImageResource(R.drawable.blackcard);
                 handCard[i].setEnabled(false);
+                handCard[i].setVisibility(View.INVISIBLE);
             }
             else
             {
@@ -453,89 +485,89 @@ public class MultiplayerGameActivity extends Fragment
         }
     }
 
-    public void clearField()
-    {
-        fieldCardImage.setImageResource(R.drawable.blackcard);
-        game.buffer = null;
-    }
-
     public void updateBloodUI()
     {
 
         if(game.playerHP==4)
         {
-            yourBlood[0].setImageResource(R.drawable.whp);
-            yourBlood[1].setImageResource(R.drawable.whp);
-            yourBlood[2].setImageResource(R.drawable.whp);
-            yourBlood[3].setImageResource(R.drawable.whp);
+            for(ImageView blood : yourBlood)
+            {
+                blood.setVisibility(View.VISIBLE);
+            }
         }
         else if (game.playerHP==3)
         {
-            yourBlood[0].setImageResource(R.drawable.bhp);
-            yourBlood[1].setImageResource(R.drawable.whp);
-            yourBlood[2].setImageResource(R.drawable.whp);
-            yourBlood[3].setImageResource(R.drawable.whp);
+            yourBlood[0].setVisibility(View.INVISIBLE);
+            yourBlood[1].setVisibility(View.VISIBLE);
+            yourBlood[2].setVisibility(View.VISIBLE);
+            yourBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.playerHP==2)
         {
-            yourBlood[0].setImageResource(R.drawable.bhp);
-            yourBlood[1].setImageResource(R.drawable.bhp);
-            yourBlood[2].setImageResource(R.drawable.whp);
-            yourBlood[3].setImageResource(R.drawable.whp);
+            yourBlood[0].setVisibility(View.INVISIBLE);
+            yourBlood[1].setVisibility(View.INVISIBLE);
+            yourBlood[2].setVisibility(View.VISIBLE);
+            yourBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.playerHP==1)
         {
-            yourBlood[0].setImageResource(R.drawable.bhp);
-            yourBlood[1].setImageResource(R.drawable.bhp);
-            yourBlood[2].setImageResource(R.drawable.bhp);
-            yourBlood[3].setImageResource(R.drawable.whp);
+            yourBlood[0].setVisibility(View.INVISIBLE);
+            yourBlood[1].setVisibility(View.INVISIBLE);
+            yourBlood[2].setVisibility(View.INVISIBLE);
+            yourBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.playerHP==0)
         {
-            yourBlood[0].setImageResource(R.drawable.bhp);
-            yourBlood[1].setImageResource(R.drawable.bhp);
-            yourBlood[2].setImageResource(R.drawable.bhp);
-            yourBlood[3].setImageResource(R.drawable.bhp);
+            yourBlood[0].setVisibility(View.INVISIBLE);
+            yourBlood[1].setVisibility(View.INVISIBLE);
+            yourBlood[2].setVisibility(View.INVISIBLE);
+            yourBlood[3].setVisibility(View.INVISIBLE);
         }
 
         if(game.opponentHP==4)
         {
-            opponentBlood[0].setImageResource(R.drawable.whp);
-            opponentBlood[1].setImageResource(R.drawable.whp);
-            opponentBlood[2].setImageResource(R.drawable.whp);
-            opponentBlood[3].setImageResource(R.drawable.whp);
+            for(ImageView blood : opponentBlood)
+            {
+                blood.setVisibility(View.VISIBLE);
+            }
         }
         else if (game.opponentHP==3)
         {
-            opponentBlood[0].setImageResource(R.drawable.bhp);
-            opponentBlood[1].setImageResource(R.drawable.whp);
-            opponentBlood[2].setImageResource(R.drawable.whp);
-            opponentBlood[3].setImageResource(R.drawable.whp);
+            opponentBlood[0].setVisibility(View.INVISIBLE);
+            opponentBlood[1].setVisibility(View.VISIBLE);
+            opponentBlood[2].setVisibility(View.VISIBLE);
+            opponentBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.opponentHP==2)
         {
-            opponentBlood[0].setImageResource(R.drawable.bhp);
-            opponentBlood[1].setImageResource(R.drawable.bhp);
-            opponentBlood[2].setImageResource(R.drawable.whp);
-            opponentBlood[3].setImageResource(R.drawable.whp);
+            opponentBlood[0].setVisibility(View.INVISIBLE);
+            opponentBlood[1].setVisibility(View.INVISIBLE);
+            opponentBlood[2].setVisibility(View.VISIBLE);
+            opponentBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.opponentHP==1)
         {
-            opponentBlood[0].setImageResource(R.drawable.bhp);
-            opponentBlood[1].setImageResource(R.drawable.bhp);
-            opponentBlood[2].setImageResource(R.drawable.bhp);
-            opponentBlood[3].setImageResource(R.drawable.whp);
+            opponentBlood[0].setVisibility(View.INVISIBLE);
+            opponentBlood[1].setVisibility(View.INVISIBLE);
+            opponentBlood[2].setVisibility(View.INVISIBLE);
+            opponentBlood[3].setVisibility(View.VISIBLE);
         }
         else if (game.opponentHP==0)
         {
-            opponentBlood[0].setImageResource(R.drawable.bhp);
-            opponentBlood[1].setImageResource(R.drawable.bhp);
-            opponentBlood[2].setImageResource(R.drawable.bhp);
-            opponentBlood[3].setImageResource(R.drawable.bhp);
+            opponentBlood[0].setVisibility(View.INVISIBLE);
+            opponentBlood[1].setVisibility(View.INVISIBLE);
+            opponentBlood[2].setVisibility(View.INVISIBLE);
+            opponentBlood[3].setVisibility(View.INVISIBLE);
         }
         Log.i("your HP"+game.playerHP,"opponent HP"+game.opponentHP);
     }
 
+    public void clearField()
+    {
+        fieldCardImage.setImageResource(R.drawable.blackcard);
+        fieldCardImage.setVisibility(View.INVISIBLE);
+        game.buffer = null;
+    }
     /**
      *  Check card's value
      */
@@ -583,12 +615,14 @@ public class MultiplayerGameActivity extends Fragment
                         game.draw();
                     }
                     handCard[i].setEnabled(true);
+                    handCard[i].setVisibility(View.VISIBLE);
                 }
                 endTurnButton.setEnabled(true);
                 setHandButton();
-
+                break;
             case 1:
                 game.opponentAttack();
+                vibrator.vibrate(100);
                 updateBloodUI();
                 Log.i("get attack", ""+game.playerHP);
                 break;

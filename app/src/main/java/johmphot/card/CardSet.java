@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class CardSet {
 
-	Card attackCard = new Card(1, R.drawable.attack,"Attack");
-    Card healCard = new Card(2, R.drawable.defense, "Heal");
-    Card meesukCard = new Card (3, R.drawable.meesuk, "Meesuk");
-    Card swapHPCard = new Card (4, R.drawable.swaphp, "SwapHP");
+	Card attackCard = new Card(1, R.drawable.redcard,"Attack");
+    Card healCard = new Card(2, R.drawable.bluecard, "Heal");
+    Card meesukCard = new Card (3, R.drawable.meesukcard, "Meesuk");
+    Card swapHPCard = new Card (4, R.drawable.greencard, "SwapHP");
 
     final int numAttack = 30;
     final int numHeal = 15;

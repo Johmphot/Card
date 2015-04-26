@@ -50,7 +50,6 @@ public class MultiplayerGame
                 playerCard[i] = draw();
             }
         }
-        heal();
     }
     public void endTurn()
     {

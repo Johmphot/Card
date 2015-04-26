@@ -62,7 +62,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/blood11"
-            android:src="@drawable/whp"
+            android:src="@drawable/ghp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/blood13" />
 
@@ -70,7 +70,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/blood12"
-            android:src="@drawable/whp"
+            android:src="@drawable/yhp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/blood13" />
 
@@ -78,7 +78,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/blood13"
-            android:src="@drawable/whp"
+            android:src="@drawable/ohp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/blood13" />
 
@@ -86,7 +86,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:id="@+id/blood14"
-            android:src="@drawable/whp"
+            android:src="@drawable/rhp"
             android:layout_alignParentBottom="true"
             android:layout_toStartOf="@+id/blood13" />
     </LinearLayout>
@@ -106,7 +106,6 @@
         android:id="@+id/card1"
         android:src="@drawable/blackcard"
         android:nestedScrollingEnabled="false"
-        android:onClick="ch11"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_alignTop="@+id/card2"
@@ -117,7 +116,6 @@
         android:layout_height="100dp"
         android:id="@+id/card2"
         android:src="@drawable/blackcard"
-        android:onClick="ch12"
         android:nestedScrollingEnabled="false"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
@@ -129,7 +127,6 @@
         android:layout_height="100dp"
         android:id="@+id/card4"
         android:src="@drawable/blackcard"
-        android:onClick="ch14"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_alignTop="@+id/card3"
@@ -140,7 +137,6 @@
         android:layout_height="100dp"
         android:id="@+id/card3"
         android:src="@drawable/blackcard"
-        android:onClick="ch13"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:layout_below="@+id/linearLayout8"
@@ -153,15 +149,14 @@
         android:src="@drawable/blackcard"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:layout_marginTop="45dp"
-        android:layout_below="@+id/opponent_label"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"/>
 
     <ImageView
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/blood24"
-        android:src="@drawable/whp"
+        android:src="@drawable/rhp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"/>
 
@@ -169,7 +164,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/blood23"
-        android:src="@drawable/whp"
+        android:src="@drawable/ohp"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/blood24"/>
 
@@ -177,7 +172,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/blood22"
-        android:src="@drawable/whp"
+        android:src="@drawable/yhp"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/blood23"/>
 
@@ -185,7 +180,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:id="@+id/blood21"
-        android:src="@drawable/whp"
+        android:src="@drawable/ghp"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@+id/blood22"/>
 
