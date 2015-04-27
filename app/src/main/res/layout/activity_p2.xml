@@ -101,34 +101,34 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp31"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView25"
+            android:src="@drawable/rhp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp33" />
+            android:layout_toStartOf="@+id/imageView27" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp32"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView26"
+            android:src="@drawable/ohp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp33" />
+            android:layout_toStartOf="@+id/imageView27" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp33"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView27"
+            android:src="@drawable/yhp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp33" />
+            android:layout_toStartOf="@+id/imageView27" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp34"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView28"
+            android:src="@drawable/ghp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp33" />
+            android:layout_toStartOf="@+id/imageView27" />
     </LinearLayout>
 
     <TextView
@@ -152,34 +152,34 @@
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp41"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView29"
+            android:src="@drawable/rhp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp43" />
+            android:layout_toStartOf="@+id/imageView31" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp42"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView30"
+            android:src="@drawable/ohp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp43" />
+            android:layout_toStartOf="@+id/imageView31" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp43"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView31"
+            android:src="@drawable/yhp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp43" />
+            android:layout_toStartOf="@+id/imageView31" />
 
         <ImageView
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/hp44"
-            android:src="@drawable/whp"
+            android:id="@+id/imageView32"
+            android:src="@drawable/ghp"
             android:layout_alignParentBottom="true"
-            android:layout_toStartOf="@+id/hp43" />
+            android:layout_toStartOf="@+id/imageView31" />
     </LinearLayout>
 
     <TextView

@@ -1,14 +1,12 @@
 package johmphot.card.local;
-
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -30,54 +28,67 @@ public class p1 extends ActionBarActivity {
     public static Card[] player2Hand = new Card[4];
     public static Card[] p1hused = new Card[4];
     public static Card[] p2hused = new Card[4];
-    CardSet set = new CardSet();
-
-    /**
-     * UI components
-     */
+    private CardSet set = new CardSet();
 
     public void createDeck() {
 
+//        for(int i = 0; i < 30; i++){
+//            Card atk = new Card(1, R.drawable.redcard,"Attack");
+//            cardD.add(atk);
+//
+//            Card def = new Card(0, R.drawable.bluecard, "Heal");
+//            cardD.add(def);
+//
+//        }
+//        for(int i = 0; i < 5; i++){
+//            Card meesuk = new Card(3, R.drawable.meesukcard, "Heal");
+//            cardD.add(meesuk);
+//
+//            Card swaphp = new Card(4, R.drawable.greencard,"Meesuk");
+//            cardD.add(swaphp);
+//        }
         cardD = set.getDeck();
         Collections.shuffle(cardD);
     }
 
     private void checkHP1(){
 
-        ImageView img0 = (ImageView) findViewById(R.id.hp11);
-        ImageView img1 = (ImageView) findViewById(R.id.hp12);
-        ImageView img2 = (ImageView) findViewById(R.id.hp13);
-        ImageView img3 = (ImageView) findViewById(R.id.hp14);
+        ImageView img0 = (ImageView) findViewById(R.id.imageView21);
+        ImageView img1 = (ImageView) findViewById(R.id.imageView22);
+        ImageView img2 = (ImageView) findViewById(R.id.imageView23);
+        ImageView img3 = (ImageView) findViewById(R.id.imageView24);
+
+        img0.setImageResource(R.drawable.rhp);
+        img1.setImageResource(R.drawable.ohp);
+        img2.setImageResource(R.drawable.yhp);
+        img3.setImageResource(R.drawable.ghp);
 
         if (HP1 == 4) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.whp);
-            img3.setImageResource(R.drawable.whp);
-
-
+            img0.setVisibility(View.VISIBLE);
+            img1.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
+            img3.setVisibility(View.VISIBLE);
         }
         if (HP1 == 3) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.whp);
-            img3.setImageResource(R.drawable.bhp);
-
+            img0.setVisibility(View.VISIBLE);
+            img1.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
+            img3.setVisibility(View.INVISIBLE);
 
         }
         if (HP1 == 2) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.bhp);
-            img3.setImageResource(R.drawable.bhp);
+            img0.setVisibility(View.VISIBLE);
+            img1.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.INVISIBLE);
+            img3.setVisibility(View.INVISIBLE);
 
 
         }
         if (HP1 == 1) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.bhp);
-            img2.setImageResource(R.drawable.bhp);
-            img3.setImageResource(R.drawable.bhp);
+            img0.setVisibility(View.VISIBLE);
+            img1.setVisibility(View.INVISIBLE);
+            img2.setVisibility(View.INVISIBLE);
+            img3.setVisibility(View.INVISIBLE);
 
         }
         if (HP1 == 0) {
@@ -86,38 +97,42 @@ public class p1 extends ActionBarActivity {
             finish();
         }
 
-        ImageView img4 = (ImageView) findViewById(R.id.hp21);
-        ImageView img5 = (ImageView) findViewById(R.id.hp22);
-        ImageView img6 = (ImageView) findViewById(R.id.hp23);
-        ImageView img7 = (ImageView) findViewById(R.id.hp24);
+        ImageView img4 = (ImageView) findViewById(R.id.imageView17);
+        ImageView img5 = (ImageView) findViewById(R.id.imageView18);
+        ImageView img6 = (ImageView) findViewById(R.id.imageView19);
+        ImageView img7 = (ImageView) findViewById(R.id.imageView20);
+
+        img4.setImageResource(R.drawable.rhp);
+        img5.setImageResource(R.drawable.ohp);
+        img6.setImageResource(R.drawable.yhp);
+        img7.setImageResource(R.drawable.ghp);
 
         if (HP2 == 4) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.whp);
-            img7.setImageResource(R.drawable.whp);
-
+            img4.setVisibility(View.VISIBLE);
+            img5.setVisibility(View.VISIBLE);
+            img6.setVisibility(View.VISIBLE);
+            img7.setVisibility(View.VISIBLE);
 
         }
         if (HP2 == 3) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.whp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.VISIBLE);
+            img5.setVisibility(View.VISIBLE);
+            img6.setVisibility(View.VISIBLE);
+            img7.setVisibility(View.INVISIBLE);
 
         }
         if (HP2 == 2) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.bhp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.VISIBLE);
+            img5.setVisibility(View.VISIBLE);
+            img6.setVisibility(View.INVISIBLE);
+            img7.setVisibility(View.INVISIBLE);
 
         }
         if (HP2 == 1) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.bhp);
-            img6.setImageResource(R.drawable.bhp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.VISIBLE);
+            img5.setVisibility(View.INVISIBLE);
+            img6.setVisibility(View.INVISIBLE);
+            img7.setVisibility(View.INVISIBLE);
 
         }
         if (HP2 == 0) {
@@ -148,12 +163,14 @@ public class p1 extends ActionBarActivity {
         // playerNo = heal that player
         if(playerNo == 2){
             if(HP2<4) {
+                Log.i("HP2",HP2+"1");
                 HP2 = HP2 + healPoints;
             }else{
                 Log.i("HP2","Exceeding");
             }
         }else{
             if(HP1<4){
+                Log.i("HP1",HP1+"1");
                 HP1 = HP1 + healPoints;
             }else{
                 Log.i("HP1","Exceeding");
@@ -170,13 +187,13 @@ public class p1 extends ActionBarActivity {
         }
     }
     private void swapHP(){
-         int i;
-         i=HP1;
-         HP1=HP2;
-         HP2=i;
+        int i;
+        i=HP1;
+        HP1=HP2;
+        HP2=i;
     }
 
-//    public void showP2(){
+    //    public void showP2(){
 //        if(t1==1){
 //            Intent intent = new Intent(p1.this, p2.class);
 //            startActivity(intent);
@@ -261,10 +278,10 @@ public class p1 extends ActionBarActivity {
                 return;
             } else if(player1Hand[1].getValue() == 0) {
                 Log.i("12", "Heal");
-                HP1 = HP1 + 1;
+                heal(1,1);
             } else if(player1Hand[1].getValue() == 1) {
                 Log.i("12", "Attack");
-                HP2 = HP2 - 1;
+                attack(2,1);
                 switchTurns();
             } else if(player1Hand[1].getValue() == 4) {
                 Log.i("12","swaphp");
@@ -318,10 +335,10 @@ public class p1 extends ActionBarActivity {
                 return;
             } else if(player1Hand[2].getValue() == 0) {
                 Log.i("13", "Heal");
-                HP1 = HP1 + 1;
+                heal(1,1);
             } else if (player1Hand[2].getValue() == 1) {
                 Log.i("13", "Attack");
-                HP2 = HP2 - 1;
+                attack(2,1);
                 switchTurns();
             } else if(player1Hand[2].getValue() == 4) {
                 Log.i("13","swaphp");
@@ -372,10 +389,10 @@ public class p1 extends ActionBarActivity {
                 return;
             } else if(player1Hand[3].getValue() == 0) {
                 Log.i("14", "Heal");
-                HP1 = HP1 + 1;
+                heal(1,1);
             } else if(player1Hand[3].getValue() == 1) {
                 Log.i("14", "Attack");
-                HP2 = HP2 - 1;
+                attack(2,1);
                 switchTurns();
             } else if(player1Hand[3].getValue() == 4) {
                 Log.i("14","swaphp");
@@ -443,6 +460,12 @@ public class p1 extends ActionBarActivity {
         for(int i = 0; i<4; i++){
             p1hused[i]=blackCard.get(0);
         }
+        if(count2==0){
+            for(int i = 0; i<4; i++){
+                p2hused[i]=blackCard.get(0);
+            }
+        }
+
 
         if(count1==0) {
             HP1 = 4;
@@ -499,9 +522,7 @@ public class p1 extends ActionBarActivity {
             player2Hand[3] = cardD.get(0);
             cardD.remove(0);
 
-            for(int i = 0; i<4; i++){
-                p2hused[i]=blackCard.get(0);
-            }
+
 
         }
         checkHP1();

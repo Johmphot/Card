@@ -2,6 +2,7 @@ package johmphot.card.bluetooth;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import johmphot.card.Card;
 import johmphot.card.CardSet;
@@ -17,6 +18,8 @@ public class MultiplayerGame
     ArrayList<Card> deck;
     boolean isYourTurn = true;
     boolean canAttack = true;
+    boolean haveShield = false;
+    boolean opponentHaveShield = false;
 
     public void start()
     {
@@ -43,6 +46,8 @@ public class MultiplayerGame
     {
         isYourTurn = true;
         canAttack = true;
+        haveShield = false;
+
         for(int i=0;i<4;i++)
         {
             if(playerCard[i]==null)
@@ -55,8 +60,12 @@ public class MultiplayerGame
     {
         isYourTurn = false;
         canAttack = false;
+        opponentHaveShield = false;
     }
 
+    /**
+     * For player's0 side
+     */
     public void attack()
     {
         opponentHP = opponentHP-1;
@@ -68,7 +77,7 @@ public class MultiplayerGame
     }
     public void meesuk()
     {
-
+        canAttack = true;
     }
     public void swapHP()
     {
@@ -76,7 +85,29 @@ public class MultiplayerGame
         playerHP = opponentHP;
         opponentHP = tmp;
     }
+    public void suicide()
+    {
+        playerHP = playerHP-3;
+        opponentHP = opponentHP-2;
+    }
+    public void discard()
+    {
 
+    }
+
+    public void shield()
+    {
+        haveShield = true;
+    }
+
+    public void shieldExpire()
+    {
+        haveShield = false;
+    }
+
+    /**
+     * For opponent's side
+     */
     public void opponentAttack()
     {
         playerHP = playerHP-1;
@@ -87,6 +118,27 @@ public class MultiplayerGame
     }
     public void opponentMeesuk()
     {
+        //do nothing
+    }
+    public void opponentSuicide()
+    {
+        playerHP = playerHP-2;
+        opponentHP = opponentHP-3;
+    }
+
+    public void opponentDiscard()
+    {
 
     }
+
+    public void opponentShield()
+    {
+        opponentHaveShield = true;
+    }
+
+    public void opponentShieldExpire()
+    {
+        opponentHaveShield = false;
+    }
+
 }

@@ -32,15 +32,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.OvershootInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import java.io.IOException;
+import java.util.Random;
+
 import android.util.Log;
 
 import johmphot.card.Card;
+import johmphot.card.FinishActivity;
 import johmphot.card.R;
+import johmphot.card.local.end;
 
 
 /**
@@ -62,8 +68,19 @@ public class MultiplayerGameActivity extends Fragment
     private ImageView[] opponentBlood = new ImageView[4];
     private ImageView[] handCard = new ImageView[4];
     private ImageView fieldCardImage;
+    private ImageView shieldIcon, opponentShieldIcon;
     private Button endTurnButton;
-    private Runnable transition;
+
+    /**
+     * Animation stuffs
+     */
+    private TranslateAnimation anim;
+    final int amountToMoveRight = 0;
+    final int amountToMoveDown = 200;
+
+    /**
+     * Phone's vibrator
+     */
     private Vibrator vibrator;
 
     /**
@@ -265,14 +282,37 @@ public class MultiplayerGameActivity extends Fragment
         fieldCardImage = (ImageView) view.findViewById(R.id.field_card);
         fieldCardImage.setVisibility(View.INVISIBLE);
 
+        shieldIcon = (ImageView) view.findViewById(R.id.shieldIcon);
+        shieldIcon.setImageResource(R.drawable.shield);
+        shieldIcon.setVisibility(View.INVISIBLE);
+
+        opponentShieldIcon = (ImageView) view.findViewById(R.id.opponentShieldIcon);
+        opponentShieldIcon.setImageResource(R.drawable.shield);
+        opponentShieldIcon.setVisibility(View.INVISIBLE);
+
         endTurnButton = (Button) view.findViewById(R.id.end_button);
 
-        transition = new Runnable() {
+        final int amountToMoveRight = 0;
+        final int amountToMoveDown = 200;
+        anim = new TranslateAnimation(0, amountToMoveRight, 0, amountToMoveDown);
+        anim.setDuration(1000);
+        anim.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
             @Override
-            public void run(){
-                fieldCardImage.animate().setDuration(2000).setInterpolator(new OvershootInterpolator()).translationY(200);
+            public void onAnimationStart(Animation animation) { }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) { }
+
+            @Override
+            public void onAnimationEnd(Animation animation)
+            {
+                RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fieldCardImage.getLayoutParams();
+                params.topMargin += amountToMoveDown;
+                params.leftMargin += amountToMoveRight;
+                fieldCardImage.setLayoutParams(params);
             }
-        };
+        });
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
     }
@@ -315,37 +355,16 @@ public class MultiplayerGameActivity extends Fragment
                 public void onClick(View v) {
 
                     game.buffer = game.playerCard[n];
-//                    if(!game.canAttack || game.playerHP==4)
-//                    {
-//                        if(game.buffer.getValue()==1 ||game.buffer.getValue()==2)
-//                        {
-//                            //do nothing
-//                        }
-//                        else
-//                        {
-//                            game.playerCard[n]=null;
-//                            checkUsedCard(game.buffer);
-//                            try
-//                            {
-//                                sendData(game.buffer);
-//                            }
-//                            catch (IOException e)
-//                            {
-//                                e.printStackTrace();
-//                            }
-//                            updateBloodUI();
-//                            updateHandUI();
-//                            updateFieldUI();
-//                        }
-//                    }
-//                    else
-                    if (handCard[n]!=null)
+                    if(game.buffer.getValue()==1 && !game.canAttack)
                     {
-//                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//                        params.setMargins(fieldCardImage.getLeft(),200,0,0);
-//                        params.height = 100;
-//                        params.width = 70;
-//                        fieldCardImage.setLayoutParams(params);
+                        Toast.makeText(getActivity(), "Can attack only once per turn", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (game.buffer.getValue()==2 && game.playerHP==4)
+                    {
+                        Toast.makeText(getActivity(), "HP is already full", Toast.LENGTH_SHORT).show();
+                    }
+                    else if (handCard[n]!=null)
+                    {
                         fieldCardImage.setVisibility(View.VISIBLE);
                         game.playerCard[n]=null;
                         checkUsedCard(game.buffer);
@@ -378,6 +397,7 @@ public class MultiplayerGameActivity extends Fragment
                 }
                 endTurnButton.setEnabled(false);
                 fieldCardImage.setVisibility(View.INVISIBLE);
+                game.opponentShieldExpire();
                 game.endTurn();
                 clearField();
                 try
@@ -424,10 +444,23 @@ public class MultiplayerGameActivity extends Fragment
                     try
                     {
                         game.buffer = (Card) Serializer.deserialize(readBuf);
-                        fieldCardImage.setVisibility(View.VISIBLE);
-                        checkBufferCard();
-                        updateFieldUI();
-                        transition.run();
+                        if (game.buffer.getValue()==0)
+                        {
+                            fieldCardImage.setVisibility(View.INVISIBLE);
+                            checkBufferCard();
+                        }
+                        else
+                        {
+                            fieldCardImage.setVisibility(View.VISIBLE);
+                            checkBufferCard();
+                            updateFieldUI();
+
+                            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) fieldCardImage.getLayoutParams();
+                            params.topMargin -= amountToMoveDown;
+                            params.leftMargin -= amountToMoveRight;
+                            fieldCardImage.setLayoutParams(params);
+                            fieldCardImage.startAnimation(anim);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -481,7 +514,6 @@ public class MultiplayerGameActivity extends Fragment
         if(game.buffer!=null)
         {
             fieldCardImage.setImageResource(game.buffer.getImage());
-            game.buffer = null;
         }
     }
 
@@ -522,6 +554,12 @@ public class MultiplayerGameActivity extends Fragment
             yourBlood[1].setVisibility(View.INVISIBLE);
             yourBlood[2].setVisibility(View.INVISIBLE);
             yourBlood[3].setVisibility(View.INVISIBLE);
+
+            Toast.makeText(getActivity(), "Opponent win !", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(getActivity(), FinishActivity.class);
+            startActivity(intent);
+            getActivity().finish();
         }
 
         if(game.opponentHP==4)
@@ -558,16 +596,22 @@ public class MultiplayerGameActivity extends Fragment
             opponentBlood[1].setVisibility(View.INVISIBLE);
             opponentBlood[2].setVisibility(View.INVISIBLE);
             opponentBlood[3].setVisibility(View.INVISIBLE);
+
+            Toast.makeText(getActivity(), "You win !", Toast.LENGTH_LONG).show();
+
+            Intent intent = new Intent(getActivity(), FinishActivity.class);
+            startActivity(intent);
+            getActivity().finish();
         }
         Log.i("your HP"+game.playerHP,"opponent HP"+game.opponentHP);
     }
 
     public void clearField()
     {
-        fieldCardImage.setImageResource(R.drawable.blackcard);
         fieldCardImage.setVisibility(View.INVISIBLE);
         game.buffer = null;
     }
+
     /**
      *  Check card's value
      */
@@ -586,11 +630,22 @@ public class MultiplayerGameActivity extends Fragment
                 Log.i("use heal card", ""+game.playerHP);
                 break;
             case 3:
-                //meesuk
+                game.meesuk();
                 break;
             case 4:
                 game.swapHP();
                 updateBloodUI();
+                break;
+            case 5:
+                game.suicide();
+                updateBloodUI();
+                break;
+            case 6:
+                //discard
+                break;
+            case 7:
+                shieldIcon.setVisibility(View.VISIBLE);
+                game.shield();
                 break;
             default:
                 break;
@@ -602,9 +657,13 @@ public class MultiplayerGameActivity extends Fragment
         //check a card received from bt stream
         switch (game.buffer.getValue())
         {
+            /**
+             * Start new turn
+             */
             case 0:
                 clearField();
-                game.startTurn(); //opponent presses "End Turn" button
+                game.startTurn();
+                shieldIcon.setVisibility(View.INVISIBLE);
                 Log.i("EndTURN your HP " + game.playerHP, "opponent HP " + game.opponentHP);
                 updateHandUI();
                 updateBloodUI();
@@ -620,6 +679,7 @@ public class MultiplayerGameActivity extends Fragment
                 endTurnButton.setEnabled(true);
                 setHandButton();
                 break;
+
             case 1:
                 game.opponentAttack();
                 vibrator.vibrate(100);
@@ -637,6 +697,20 @@ public class MultiplayerGameActivity extends Fragment
             case 4:
                 game.swapHP();
                 updateBloodUI();
+                break;
+            case 5:
+                game.opponentSuicide();
+                updateBloodUI();
+                break;
+            case 6:
+                Random r = new Random();
+                int R = r.nextInt(4);
+                game.playerCard[R] = null;
+                updateHandUI();
+                break;
+            case 7:
+                opponentShieldIcon.setVisibility(View.VISIBLE);
+                game.opponentShield();
                 break;
             default:
                 break;

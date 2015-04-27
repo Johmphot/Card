@@ -1,14 +1,13 @@
 package johmphot.card.local;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-
 import java.util.ArrayList;
 
 import johmphot.card.Card;
@@ -20,34 +19,39 @@ public class p2 extends ActionBarActivity {
 
     private void checkHP2(){
 
-        ImageView img0 = (ImageView) findViewById(R.id.hp34);
-        ImageView img1 = (ImageView) findViewById(R.id.hp33);
-        ImageView img2 = (ImageView) findViewById(R.id.hp32);
-        ImageView img3 = (ImageView) findViewById(R.id.hp31);
+        ImageView img0 = (ImageView) findViewById(R.id.imageView28);
+        ImageView img1 = (ImageView) findViewById(R.id.imageView27);
+        ImageView img2 = (ImageView) findViewById(R.id.imageView26);
+        ImageView img3 = (ImageView) findViewById(R.id.imageView25);
+
+        img0.setImageResource(R.drawable.ghp);
+        img1.setImageResource(R.drawable.yhp);
+        img2.setImageResource(R.drawable.ohp);
+        img3.setImageResource(R.drawable.rhp);
 
         if (p1.HP1 == 4) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.whp);
-            img3.setImageResource(R.drawable.whp);
+            img0.setVisibility(View.VISIBLE);
+            img1.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
+            img3.setVisibility(View.VISIBLE);
         }
         if (p1.HP1 == 3) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.whp);
-            img3.setImageResource(R.drawable.bhp);
+            img0.setVisibility(View.INVISIBLE);
+            img1.setVisibility(View.VISIBLE);
+            img2.setVisibility(View.VISIBLE);
+            img3.setVisibility(View.VISIBLE);
         }
         if (p1.HP1 == 2) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.whp);
-            img2.setImageResource(R.drawable.bhp);
-            img3.setImageResource(R.drawable.bhp);
+            img0.setVisibility(View.INVISIBLE);
+            img1.setVisibility(View.INVISIBLE);
+            img2.setVisibility(View.VISIBLE);
+            img3.setVisibility(View.VISIBLE);
         }
         if (p1.HP1 == 1) {
-            img0.setImageResource(R.drawable.whp);
-            img1.setImageResource(R.drawable.bhp);
-            img2.setImageResource(R.drawable.bhp);
-            img3.setImageResource(R.drawable.bhp);
+            img0.setVisibility(View.INVISIBLE);
+            img1.setVisibility(View.INVISIBLE);
+            img2.setVisibility(View.INVISIBLE);
+            img3.setVisibility(View.VISIBLE);
         }
         if (p1.HP1 == 0) {
             Intent intent = new Intent(p2.this, end.class);
@@ -55,34 +59,41 @@ public class p2 extends ActionBarActivity {
             finish();
         }
 
-        ImageView img4 = (ImageView) findViewById(R.id.hp44);
-        ImageView img5 = (ImageView) findViewById(R.id.hp43);
-        ImageView img6 = (ImageView) findViewById(R.id.hp42);
-        ImageView img7 = (ImageView) findViewById(R.id.hp41);
+        ImageView img4 = (ImageView) findViewById(R.id.imageView32);
+        ImageView img5 = (ImageView) findViewById(R.id.imageView31);
+        ImageView img6 = (ImageView) findViewById(R.id.imageView30);
+        ImageView img7 = (ImageView) findViewById(R.id.imageView29);
+
+        img4.setImageResource(R.drawable.ghp);
+        img5.setImageResource(R.drawable.yhp);
+        img6.setImageResource(R.drawable.ohp);
+        img7.setImageResource(R.drawable.rhp);
 
         if (p1.HP2 == 4) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.whp);
-            img7.setImageResource(R.drawable.whp);
+            img4.setVisibility(View.VISIBLE);
+            img5.setVisibility(View.VISIBLE);
+            img6.setVisibility(View.VISIBLE);
+            img7.setVisibility(View.VISIBLE);
         }
         if (p1.HP2 == 3) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.whp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.INVISIBLE);
+            img5.setVisibility(View.VISIBLE);
+            img6.setVisibility(View.VISIBLE);
+            img7.setVisibility(View.VISIBLE);
         }
         if (p1.HP2 == 2) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.whp);
-            img6.setImageResource(R.drawable.bhp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.INVISIBLE);
+            img5.setVisibility(View.INVISIBLE);
+            img6.setVisibility(View.VISIBLE);
+            img7.setVisibility(View.VISIBLE);
+
         }
         if (p1.HP2 == 1) {
-            img4.setImageResource(R.drawable.whp);
-            img5.setImageResource(R.drawable.bhp);
-            img6.setImageResource(R.drawable.bhp);
-            img7.setImageResource(R.drawable.bhp);
+            img4.setVisibility(View.INVISIBLE);
+            img5.setVisibility(View.INVISIBLE);
+            img6.setVisibility(View.INVISIBLE);
+            img7.setVisibility(View.VISIBLE);
+
         }
         if (p1.HP2 == 0) {
             Intent intent = new Intent(p2.this, end.class);
@@ -112,12 +123,14 @@ public class p2 extends ActionBarActivity {
         // playerNo = heal that player
         if(playerNo == 2){
             if(p1.HP2<4) {
+                Log.i("HP2",p1.HP2+"1");
                 p1.HP2 = p1.HP2 + healPoints;
             }else{
                 Log.i("HP2","Exceeding");
             }
         }else{
             if(p1.HP1<4){
+                Log.i("HP1",p1.HP1+"1");
                 p1.HP1 = p1.HP1 + healPoints;
             }else{
                 Log.i("HP1","Exceeding");
@@ -147,7 +160,7 @@ public class p2 extends ActionBarActivity {
         startActivity(intent);
         finish();
     }
-//    public void showP1(){
+    //    public void showP1(){
 //        if(p1.t2==1){
 //            Intent intent = new Intent(p2.this, p1.class);
 //            startActivity(intent);
