@@ -21,6 +21,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,7 +47,6 @@ import android.util.Log;
 import johmphot.card.Card;
 import johmphot.card.FinishActivity;
 import johmphot.card.R;
-import johmphot.card.local.end;
 
 
 /**
@@ -97,6 +97,8 @@ public class MultiplayerGameActivity extends Fragment
      * Game object
      */
     MultiplayerGame game;
+    MediaPlayer bgMusic;
+    public static boolean isServer;
 
 
     @Override
@@ -113,6 +115,11 @@ public class MultiplayerGameActivity extends Fragment
             activity.finish();
         }
 
+        btGameService = new MultiplayerGameService(getActivity(), mHandler);
+        isServer = true;
+
+        bgMusic = MediaPlayer.create(getActivity(), R.raw.ingame);
+        bgMusic.start();
     }
 
 
@@ -126,17 +133,15 @@ public class MultiplayerGameActivity extends Fragment
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         }
-        else if (btGameService == null)
+        try
         {
-            try
-            {
-                setupGame();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            setupGame();
         }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -145,6 +150,7 @@ public class MultiplayerGameActivity extends Fragment
         if (btGameService != null) {
             btGameService.stop();
         }
+        bgMusic.stop();
     }
 
 
@@ -322,8 +328,6 @@ public class MultiplayerGameActivity extends Fragment
      */
     public void setupGame() throws IOException
     {
-        btGameService = new MultiplayerGameService(getActivity(), mHandler);
-
         game = new MultiplayerGame();
         game.start();
         updateBloodUI();
@@ -334,15 +338,22 @@ public class MultiplayerGameActivity extends Fragment
 
         setEndButton();
 
-        if(btAdapter.getScanMode()==BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) //player1 start first
+        Log.i("Status", " "+isServer);
+
+        if(!isServer)
         {
-            btAdapter.cancelDiscovery();
+            Log.i("Not Server","");
             for(int i=0;i<4;i++)
             {
-                handCard[i].setEnabled(true);
+                handCard[i].setEnabled(false);
             }
-            endTurnButton.setEnabled(true);
+            endTurnButton.setEnabled(false);
+            fieldCardImage.setVisibility(View.INVISIBLE);
+            game.endTurn();
+            clearField();
+            sendData(new Card (0, 0, "End_turn"));
         }
+
     }
 
 
@@ -382,6 +393,17 @@ public class MultiplayerGameActivity extends Fragment
                     }
                 }
             });
+            handCard[i].setOnLongClickListener(new View.OnLongClickListener() {
+
+                @Override
+                public boolean onLongClick(View v) {
+                    game.playerCard[n]=null;
+                    updateHandUI();
+                    long[] pattern = {100,100};
+                    vibrator.vibrate(pattern, -1);
+                    return true;
+                }
+            });
         }
     }
 
@@ -398,6 +420,7 @@ public class MultiplayerGameActivity extends Fragment
                 endTurnButton.setEnabled(false);
                 fieldCardImage.setVisibility(View.INVISIBLE);
                 game.opponentShieldExpire();
+                opponentShieldIcon.setVisibility(View.INVISIBLE);
                 game.endTurn();
                 clearField();
                 try
@@ -613,7 +636,7 @@ public class MultiplayerGameActivity extends Fragment
     }
 
     /**
-     *  Check card's value
+     *  Check used card's value
      */
     public void checkUsedCard(Card c)
     {
@@ -651,7 +674,9 @@ public class MultiplayerGameActivity extends Fragment
                 break;
         }
     }
-
+    /**
+     *  Check card's value on field
+     */
     public void checkBufferCard()
     {
         //check a card received from bt stream
@@ -705,7 +730,11 @@ public class MultiplayerGameActivity extends Fragment
             case 6:
                 Random r = new Random();
                 int R = r.nextInt(4);
-                game.playerCard[R] = null;
+                while(game.playerCard[R]==null)
+                {
+                    R = r.nextInt(4);
+                }
+                game.playerCard[R]=null;
                 updateHandUI();
                 break;
             case 7:
