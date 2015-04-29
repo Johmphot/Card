@@ -19,8 +19,10 @@ package johmphot.card.bluetooth;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
@@ -120,7 +122,27 @@ public class MultiplayerGameActivity extends Fragment
 
         bgMusic = MediaPlayer.create(getActivity(), R.raw.ingame);
         bgMusic.start();
+
+        IntentFilter filterScreenOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        IntentFilter filterScreenOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        getActivity().registerReceiver(screenReceiver, filterScreenOff);
+        getActivity().registerReceiver(screenReceiver, filterScreenOn);
     }
+
+    private BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if(action.equals(Intent.ACTION_SCREEN_OFF))
+            {
+                bgMusic.reset();
+            }
+            else if(action.equals(Intent.ACTION_SCREEN_ON))
+            {
+                bgMusic.start();
+            }
+        }
+    };
 
 
     @Override
@@ -151,6 +173,7 @@ public class MultiplayerGameActivity extends Fragment
             btGameService.stop();
         }
         bgMusic.stop();
+        getActivity().unregisterReceiver(screenReceiver);
     }
 
 
@@ -366,15 +389,9 @@ public class MultiplayerGameActivity extends Fragment
                 public void onClick(View v) {
 
                     game.buffer = game.playerCard[n];
-                    if(game.buffer.getValue()==1 && !game.canAttack)
-                    {
-                        Toast.makeText(getActivity(), "Can attack only once per turn", Toast.LENGTH_SHORT).show();
-                    }
-                    else if (game.buffer.getValue()==2 && game.playerHP==4)
-                    {
-                        Toast.makeText(getActivity(), "HP is already full", Toast.LENGTH_SHORT).show();
-                    }
-                    else if (handCard[n]!=null)
+                    int value = game.buffer.getValue();
+                    boolean valid = isCardValid(value);
+                    if (handCard[n]!=null && valid)
                     {
                         fieldCardImage.setVisibility(View.VISIBLE);
                         game.playerCard[n]=null;
@@ -636,6 +653,37 @@ public class MultiplayerGameActivity extends Fragment
     }
 
     /**
+     *  Check card validity
+     */
+    public boolean isCardValid(int value)
+    {
+        if(value==1 && !game.canAttack)
+        {
+            Toast.makeText(getActivity(), "Can attack only once per turn", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (value==2 && game.playerHP==4)
+        {
+            Toast.makeText(getActivity(), "HP is already full", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (value==6 && game.useSuicide)
+        {
+            Toast.makeText(getActivity(), "Can use suicide once per turn", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (value==7 && game.haveShield)
+        {
+            Toast.makeText(getActivity(), "Already have shield", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    /**
      *  Check used card's value
      */
     public void checkUsedCard(Card c)
@@ -662,13 +710,17 @@ public class MultiplayerGameActivity extends Fragment
             case 5:
                 game.suicide();
                 updateBloodUI();
+                game.useSuicide = true;
                 break;
             case 6:
                 //discard
                 break;
             case 7:
-                shieldIcon.setVisibility(View.VISIBLE);
-                game.shield();
+                if (!game.haveShield)
+                {
+                    shieldIcon.setVisibility(View.VISIBLE);
+                    game.shield();
+                }
                 break;
             default:
                 break;
@@ -694,12 +746,11 @@ public class MultiplayerGameActivity extends Fragment
                 updateBloodUI();
                 for(int i=0;i<4;i++)
                 {
-                    if(game.playerCard[i]==null)
+                    if(game.playerCard[i]!=null)
                     {
-                        game.draw();
+                        handCard[i].setEnabled(true);
+                        handCard[i].setVisibility(View.VISIBLE);
                     }
-                    handCard[i].setEnabled(true);
-                    handCard[i].setVisibility(View.VISIBLE);
                 }
                 endTurnButton.setEnabled(true);
                 setHandButton();
@@ -738,8 +789,10 @@ public class MultiplayerGameActivity extends Fragment
                 updateHandUI();
                 break;
             case 7:
-                opponentShieldIcon.setVisibility(View.VISIBLE);
-                game.opponentShield();
+                if (!game.opponentHaveShield) {
+                    opponentShieldIcon.setVisibility(View.VISIBLE);
+                    game.opponentShield();
+                }
                 break;
             default:
                 break;

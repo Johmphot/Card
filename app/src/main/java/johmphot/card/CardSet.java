@@ -12,13 +12,13 @@ public class CardSet {
     Card discardCard = new Card (6, R.drawable.firecard, "Discard");
     Card shieldCard = new Card (7, R.drawable.shieldcard, "Shield");
 
-    final int numAttack = 15;
-    final int numHeal = 15;
-    final int numMeesuk = 5;
-    final int numSwapHP = 5;
-    final int numSuicide = 5;
-    final int numDiscard = 10;
-    final int numShield = 10;
+    public final int numAttack = 10;
+    public final int numHeal = 10;
+    public final int numMeesuk = 5;
+    public final int numSwapHP = 5;
+    public final int numSuicide = 3;
+    public final int numDiscard = 7;
+    public final int numShield = 7;
 	
 	ArrayList<Card> deck = new ArrayList<Card>();
 	public ArrayList<Card> getDeck() {

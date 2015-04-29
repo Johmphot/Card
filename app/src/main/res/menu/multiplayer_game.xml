@@ -28,9 +28,5 @@
         app:showAsAction="never"
         android:title="Discoverable"/>
 
-    <item
-        android:id="@+id/new_game"
-        app:showAsAction="never"
-        android:title="Start New Game"/>
 </menu>
 

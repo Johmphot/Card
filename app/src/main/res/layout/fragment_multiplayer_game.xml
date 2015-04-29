@@ -46,6 +46,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Opponent"
+        android:textStyle="bold"
+        android:textColor="#A52A2A"
         android:id="@+id/opponent_label"
         android:layout_below="@+id/blood24"
         android:layout_alignParentEnd="true"/>
@@ -96,6 +98,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="You"
+        android:textStyle="bold"
+        android:textColor="#A52A2A"
         android:id="@+id/you_label"
         android:layout_above="@+id/linearLayout11"
         android:layout_alignParentEnd="true" />
@@ -191,6 +195,8 @@
         android:layout_height="wrap_content"
         android:text="End Turn"
         android:id="@+id/end_button"
+        android:background="@drawable/mybutton"
+        android:textColor="#ffffff"
         android:layout_alignBottom="@+id/linearLayout11"
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/card1"/>

@@ -3,25 +3,22 @@
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#007F7F"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
-
-    <TextView android:text="Card Game" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:layout_marginTop="85dp"
-        android:textSize="36dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Local Multiplayer"
         android:id="@+id/local_multiplayer_button"
-        android:layout_marginBottom="75dp"
+        android:layout_marginBottom="30dp"
+        android:clickable="true"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:clickable="true" />
+        android:textSize="24dp"
+        android:background="#00000000"
+        android:textColor="#EC1C24"
+        android:textStyle="bold"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -31,6 +28,19 @@
         android:clickable="true"
         android:layout_above="@+id/local_multiplayer_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="70dp" />
+        android:layout_marginBottom="20dp"
+        android:background="#00000000"
+        android:textColor="#EC1C24"
+        android:textStyle="bold"
+        android:textSize="24dp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/introPic"
+        android:src="@drawable/introbg"
+        android:layout_above="@+id/bt_multiplayer_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"/>
 
 </RelativeLayout>

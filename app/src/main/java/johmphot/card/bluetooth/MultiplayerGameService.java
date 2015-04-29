@@ -473,7 +473,6 @@ public class MultiplayerGameService
             try
             {
                 mmOutStream.write(buffer);
-
             }
             catch (IOException e) {}
         }

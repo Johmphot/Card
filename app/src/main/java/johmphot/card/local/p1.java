@@ -12,6 +12,7 @@ import java.util.Collections;
 
 import johmphot.card.Card;
 import johmphot.card.CardSet;
+import johmphot.card.MainActivity;
 import johmphot.card.R;
 
 public class p1 extends ActionBarActivity {
@@ -442,7 +443,7 @@ public class p1 extends ActionBarActivity {
     public void onClickRestart1(View v){
         count1=0;
         count2=0;
-        Intent intent = new Intent(p1.this, MainLocal.class);
+        Intent intent = new Intent(p1.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

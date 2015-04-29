@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 import johmphot.card.Card;
+import johmphot.card.MainActivity;
 import johmphot.card.R;
 
 public class p2 extends ActionBarActivity {
@@ -156,7 +157,7 @@ public class p2 extends ActionBarActivity {
     public void onClickRestart2(View v){
         p1.count1=0;
         p1.count2=0;
-        Intent intent = new Intent(p2.this, MainLocal.class);
+        Intent intent = new Intent(p2.this, MainActivity.class);
         startActivity(intent);
         finish();
     }

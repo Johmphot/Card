@@ -2,9 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="johmphot.card" >
 
+    <uses-sdk android:minSdkVersion="19" />
+
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -19,10 +21,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".GameActivity"
-            android:label="@string/title_activity_game" >
         </activity>
         <activity
             android:name=".FinishActivity"
@@ -51,6 +49,10 @@
         <activity
             android:name=".local.p2"
             android:label="@string/title_activity_p2" >
+        </activity>
+        <activity
+            android:name=".CreateDeckActivity"
+            android:label="@string/title_activity_create_deck" >
         </activity>
     </application>
 

@@ -1,23 +1,30 @@
 package johmphot.card;
 
 import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import johmphot.card.bluetooth.CreateMatchActivity;
-import johmphot.card.local.MainLocal;
+import johmphot.card.local.p1;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private Button localMultiplayer, btMultiplayer;
+    private ImageView introPic;
     BluetoothAdapter btAdapter;
+    MediaPlayer mySound;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,12 +44,14 @@ public class MainActivity extends ActionBarActivity {
                 turnOnBluetooth();
             }
         }
+        introPic = (ImageView) findViewById(R.id.introPic);
+        introPic.setImageResource(R.drawable.introbg);
 
         localMultiplayer = (Button)findViewById(R.id.local_multiplayer_button);
         localMultiplayer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MainLocal.class);
+                Intent intent = new Intent(MainActivity.this, p1.class);
                 startActivity(intent);
                 finish();
             }
@@ -56,6 +65,14 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        mySound = MediaPlayer.create(this, R.raw.intro);
+        mySound.start();
+
+        IntentFilter filterScreenOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        IntentFilter filterScreenOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        registerReceiver(screenReceiver, filterScreenOff);
+        registerReceiver(screenReceiver, filterScreenOn);
 
 
     }
@@ -99,4 +116,34 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+        mySound.reset();
+        unregisterReceiver(screenReceiver);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        mySound.reset();
+    }
+
+    private BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if(action.equals(Intent.ACTION_SCREEN_OFF))
+            {
+                mySound.reset();
+            }
+            else if(action.equals(Intent.ACTION_SCREEN_ON))
+            {
+                mySound.start();
+            }
+        }
+    };
 }

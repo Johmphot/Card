@@ -27,11 +27,11 @@ public class CreateMatchActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_match);
-        if (savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             transaction.replace(R.id.frame_view, fragment);
             transaction.commit();
         }
+
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
     }
@@ -68,7 +68,6 @@ public class CreateMatchActivity extends ActionBarActivity
                     case BluetoothAdapter.STATE_CONNECTED:
                         Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT).show();
                         break;
-
                 }
             }
         }
@@ -78,6 +77,7 @@ public class CreateMatchActivity extends ActionBarActivity
     public void onBackPressed()
     {
         super.onBackPressed();
+        fragment.onDestroy();
         this.finish();
     }
 }
