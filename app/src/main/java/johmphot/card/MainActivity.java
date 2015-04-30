@@ -132,6 +132,13 @@ public class MainActivity extends ActionBarActivity {
         mySound.reset();
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        mySound.start();
+    }
+
     private BroadcastReceiver screenReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -57,6 +57,13 @@ public class CreateMatchActivity extends ActionBarActivity
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+        bgMusic.start();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.multiplayer_game, menu);
