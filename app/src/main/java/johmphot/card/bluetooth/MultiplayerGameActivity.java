@@ -99,7 +99,6 @@ public class MultiplayerGameActivity extends Fragment
      * Game object
      */
     MultiplayerGame game;
-    MediaPlayer bgMusic;
     public static boolean isServer;
 
 
@@ -120,29 +119,7 @@ public class MultiplayerGameActivity extends Fragment
         btGameService = new MultiplayerGameService(getActivity(), mHandler);
         isServer = true;
 
-        bgMusic = MediaPlayer.create(getActivity(), R.raw.ingame);
-        bgMusic.start();
-
-        IntentFilter filterScreenOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-        IntentFilter filterScreenOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        getActivity().registerReceiver(screenReceiver, filterScreenOff);
-        getActivity().registerReceiver(screenReceiver, filterScreenOn);
     }
-
-    private BroadcastReceiver screenReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if(action.equals(Intent.ACTION_SCREEN_OFF))
-            {
-                bgMusic.reset();
-            }
-            else if(action.equals(Intent.ACTION_SCREEN_ON))
-            {
-                bgMusic.start();
-            }
-        }
-    };
 
 
     @Override
@@ -172,8 +149,6 @@ public class MultiplayerGameActivity extends Fragment
         if (btGameService != null) {
             btGameService.stop();
         }
-        bgMusic.stop();
-        getActivity().unregisterReceiver(screenReceiver);
     }
 
 

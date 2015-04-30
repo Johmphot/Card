@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.MediaPlayer;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -23,6 +24,8 @@ public class CreateMatchActivity extends ActionBarActivity
     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
     MultiplayerGameActivity fragment = new MultiplayerGameActivity();
 
+    MediaPlayer bgMusic;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +35,25 @@ public class CreateMatchActivity extends ActionBarActivity
             transaction.commit();
         }
 
+        bgMusic = MediaPlayer.create(this, R.raw.ingame);
+        bgMusic.start();
+
         IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(mReceiver, filter);
+
+        IntentFilter filterScreenOff = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        IntentFilter filterScreenOn = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        registerReceiver(screenReceiver, filterScreenOff);
+        registerReceiver(screenReceiver, filterScreenOn);
     }
 
     @Override
     public void onDestroy()
     {
         super.onDestroy();
+        bgMusic.reset();
         unregisterReceiver(mReceiver);
+        unregisterReceiver(screenReceiver);
     }
 
     @Override
@@ -69,6 +82,21 @@ public class CreateMatchActivity extends ActionBarActivity
                         Toast.makeText(getApplicationContext(), "Connected", Toast.LENGTH_SHORT).show();
                         break;
                 }
+            }
+        }
+    };
+
+    private BroadcastReceiver screenReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if(action.equals(Intent.ACTION_SCREEN_OFF))
+            {
+                bgMusic.reset();
+            }
+            else if(action.equals(Intent.ACTION_SCREEN_ON))
+            {
+                bgMusic.start();
             }
         }
     };
