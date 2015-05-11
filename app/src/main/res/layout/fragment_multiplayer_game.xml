@@ -217,4 +217,13 @@
         android:layout_below="@+id/opponent_label"
         android:layout_alignStart="@+id/shieldIcon"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Your Turn"
+        android:id="@+id/yourturn_text"
+        android:layout_alignBottom="@+id/shieldIcon"
+        android:layout_alignStart="@+id/card1"/>
+
 </RelativeLayout>

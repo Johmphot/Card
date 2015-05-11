@@ -40,6 +40,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.Random;
@@ -71,6 +72,7 @@ public class MultiplayerGameActivity extends Fragment
     private ImageView[] handCard = new ImageView[4];
     private ImageView fieldCardImage;
     private ImageView shieldIcon, opponentShieldIcon;
+    private TextView yourturnText;
     private Button endTurnButton;
 
     /**
@@ -296,6 +298,9 @@ public class MultiplayerGameActivity extends Fragment
 
         endTurnButton = (Button) view.findViewById(R.id.end_button);
 
+        yourturnText = (TextView) view.findViewById(R.id.yourturn_text);
+        yourturnText.setVisibility(View.INVISIBLE);
+
         final int amountToMoveRight = 0;
         final int amountToMoveDown = 200;
         anim = new TranslateAnimation(0, amountToMoveRight, 0, amountToMoveDown);
@@ -336,7 +341,8 @@ public class MultiplayerGameActivity extends Fragment
 
         setEndButton();
 
-        Log.i("Status", " "+isServer);
+        Log.i("Status", " " + isServer);
+        yourturnText.setVisibility(View.VISIBLE);
 
         if(!isServer)
         {
@@ -347,6 +353,7 @@ public class MultiplayerGameActivity extends Fragment
             }
             endTurnButton.setEnabled(false);
             fieldCardImage.setVisibility(View.INVISIBLE);
+            yourturnText.setVisibility(View.INVISIBLE);
             game.endTurn();
             clearField();
             sendData(new Card (0, 0, "End_turn"));
@@ -413,6 +420,7 @@ public class MultiplayerGameActivity extends Fragment
                 fieldCardImage.setVisibility(View.INVISIBLE);
                 game.opponentShieldExpire();
                 opponentShieldIcon.setVisibility(View.INVISIBLE);
+                yourturnText.setVisibility(View.INVISIBLE);
                 game.endTurn();
                 clearField();
                 try
@@ -716,6 +724,7 @@ public class MultiplayerGameActivity extends Fragment
                 clearField();
                 game.startTurn();
                 shieldIcon.setVisibility(View.INVISIBLE);
+                yourturnText.setVisibility(View.VISIBLE);
                 Log.i("EndTURN your HP " + game.playerHP, "opponent HP " + game.opponentHP);
                 updateHandUI();
                 updateBloodUI();
